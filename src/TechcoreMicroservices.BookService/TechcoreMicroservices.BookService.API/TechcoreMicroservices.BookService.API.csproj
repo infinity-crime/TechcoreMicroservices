@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TechcoreMicroservices.BookService.Application\TechcoreMicroservices.BookService.Application.csproj" />
+    <ProjectReference Include="..\TechcoreMicroservices.BookService.Contracts\TechcoreMicroservices.BookService.Contracts.csproj" />
+    <ProjectReference Include="..\TechcoreMicroservices.BookService.Infrastructure\TechcoreMicroservices.BookService.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
