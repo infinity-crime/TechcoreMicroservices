@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentResults" Version="4.0.0" />
+    <PackageReference Include="MediatR" Version="13.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TechcoreMicroservices.BookService.Contracts\TechcoreMicroservices.BookService.Contracts.csproj" />
     <ProjectReference Include="..\TechcoreMicroservices.BookService.Domain\TechcoreMicroservices.BookService.Domain.csproj" />
   </ItemGroup>
 
