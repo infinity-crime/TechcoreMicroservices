@@ -158,7 +158,7 @@ public class BookService : IBookService
         }
     }
 
-    public async Task<Result<BookResponse>> GetBookById(Guid bookId, CancellationToken cancellationToken = default)
+    public async Task<Result<BookResponse>> GetBookByIdAsync(Guid bookId, CancellationToken cancellationToken = default)
     {
         try
         {

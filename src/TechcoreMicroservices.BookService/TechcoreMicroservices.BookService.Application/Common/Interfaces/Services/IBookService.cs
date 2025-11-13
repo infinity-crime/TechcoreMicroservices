@@ -13,7 +13,7 @@ public interface IBookService
 {
     Task<Result<IEnumerable<BookResponse>>> GetAllBooksAsync(CancellationToken cancellationToken = default);
     Task<Result<IEnumerable<BookWithAuthorsResponse>>> GetAllBooksWithAuthorsAsync(CancellationToken cancellationToken = default);
-    Task<Result<BookResponse>> GetBookById(Guid bookId, CancellationToken cancellationToken = default);
+    Task<Result<BookResponse>> GetBookByIdAsync(Guid bookId, CancellationToken cancellationToken = default);
     Task<Result<BookWithAuthorsResponse>> GetBookByIdWithAuthorsAsync(Guid bookId, CancellationToken cancellationToken = default);
 
     Task<Result<BookResponse>> CreateBookAsync(CreateBookRequest request, CancellationToken cancellationToken = default);
