@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence;
+using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Dapper;
 using TechcoreMicroservices.BookService.Infrastructure.Data;
+using TechcoreMicroservices.BookService.Infrastructure.Data.Repositories.Dapper;
 using TechcoreMicroservices.BookService.Infrastructure.Data.Repositories.EFCore;
 
 namespace TechcoreMicroservices.BookService.Infrastructure
@@ -19,14 +21,9 @@ namespace TechcoreMicroservices.BookService.Infrastructure
             AddDbContext(services, configuration);
 
             AddEfCoreRepositories(services);
+            AddDapperRepositories(services);
 
             return services;
-        }
-
-        private static void AddEfCoreRepositories(IServiceCollection services)
-        {
-            services.AddScoped<IAuthorRepository, AuthorRepository>();
-            services.AddScoped<IBookRepository, BookRepository>();
         }
 
         private static void AddDbContext(IServiceCollection services, IConfiguration configuration)
@@ -38,6 +35,17 @@ namespace TechcoreMicroservices.BookService.Infrastructure
             {
                 options.UseNpgsql(connectionStringDb);
             });
+        }
+
+        private static void AddEfCoreRepositories(IServiceCollection services)
+        {
+            services.AddScoped<IAuthorRepository, AuthorRepository>();
+            services.AddScoped<IBookRepository, BookRepository>();
+        }
+
+        private static void AddDapperRepositories(IServiceCollection services)
+        {
+            services.AddScoped<IBookDapperRepository, BookDapperRepository>();
         }
     }
 }

@@ -3,15 +3,22 @@ using TechcoreMicroservices.BookService.Books.API.Middleware;
 using TechcoreMicroservices.BookService.Infrastructure;
 using FluentValidation.AspNetCore;
 using FluentValidation;
+using TechcoreMicroservices.BookService.Application.Common.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddApplication();
 
+    // Читаем конфигурацию с appsettings в наши POCO классы из слоя Application
+    builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+
     // Регистрация FluentValidation и кастомных валидаторов
     builder.Services.AddFluentValidationAutoValidation();
     builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+    // Регистрация проверки работоспособности для K8s
+    builder.Services.AddHealthChecks();
 
     builder.Services.AddControllers();
 
@@ -47,5 +54,8 @@ var app = builder.Build();
     app.UseHttpsRedirection();
     app.UseAuthorization();
     app.MapControllers();
+
+    app.MapHealthChecks("/healthz");
+
     app.Run();
 }

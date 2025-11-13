@@ -1,5 +1,6 @@
 ﻿using FluentResults;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,4 +22,7 @@ public interface IBookService
     Task<Result> UpdateBookInfoAsync(UpdateBookRequest request, CancellationToken cancellationToken = default);
     Task<Result> UpdateBookAuthorsAsync(UpdateBookAuthorsRequest request, CancellationToken cancellationToken = default);
     Task<Result> DeleteBookByIdAsync(Guid bookId, CancellationToken cancellationToken = default);
+
+    Task<Result<IEnumerable<BookResponse>>> GetBooksByYearAsync(int year);
+    Task<Result<IEnumerable<CountBooksByYearsResponse>>> GetCountBooksByYearsAsync();
 }

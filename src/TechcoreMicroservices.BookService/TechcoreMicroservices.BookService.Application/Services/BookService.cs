@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechcoreMicroservices.BookService.Application.Common.Errors;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence;
+using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Dapper;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 using TechcoreMicroservices.BookService.Contracts.Requests.Book;
 using TechcoreMicroservices.BookService.Contracts.Responses.Author;
@@ -22,13 +23,18 @@ namespace TechcoreMicroservices.BookService.Application.Services;
 public class BookService : IBookService
 {
     private readonly IBookRepository _bookRepository;
+    private readonly IBookDapperRepository _bookDapperRepository;
     private readonly IAuthorRepository _authorRepository;
 
     private readonly ILogger<BookService> _logger;
 
-    public BookService(IBookRepository bookRepository, IAuthorRepository authorRepository, ILogger<BookService> logger)
+    public BookService(IBookRepository bookRepository, 
+        IBookDapperRepository bookDapperRepository,
+        IAuthorRepository authorRepository, 
+        ILogger<BookService> logger)
     {
         _bookRepository = bookRepository;
+        _bookDapperRepository = bookDapperRepository;
         _authorRepository = authorRepository;
         _logger = logger;
     }
@@ -188,6 +194,36 @@ public class BookService : IBookService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unexpected error get book with authors");
+            return Result.Fail(new DatabaseError(ex.Message));
+        }
+    }
+
+    public async Task<Result<IEnumerable<BookResponse>>> GetBooksByYearAsync(int year)
+    {
+        try
+        {
+            var books = await _bookDapperRepository.GetBooksByYearAsync(year);
+
+            return Result.Ok(books.Select(b => new BookResponse(b.Id, b.Title, b.Year)));
+        }
+        catch(Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error get books by year (Dapper)");
+            return Result.Fail(new DatabaseError(ex.Message));
+        }
+    }
+
+    public async Task<Result<IEnumerable<CountBooksByYearsResponse>>> GetCountBooksByYearsAsync()
+    {
+        try
+        {
+            var books = await _bookDapperRepository.GetCountBooksByYearsAsync();
+
+            return Result.Ok(books);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Unexpected error get count books by years (Dapper)");
             return Result.Fail(new DatabaseError(ex.Message));
         }
     }

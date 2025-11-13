@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
+using TechcoreMicroservices.BookService.Application.Common.Settings;
 using TechcoreMicroservices.BookService.Books.API.Controllers.Common;
 using TechcoreMicroservices.BookService.Contracts.Requests.Book;
 using TechcoreMicroservices.BookService.Contracts.Responses.Book;
@@ -12,9 +14,18 @@ public class BooksController : BaseController
 {
     private readonly IBookService _bookService;
 
-    public BooksController(IBookService bookService)
+    private readonly ApiSettings _apiSettings;
+
+    public BooksController(IBookService bookService, IOptions<ApiSettings> apiSettings)
     {
         _bookService = bookService;
+        _apiSettings = apiSettings.Value;
+    }
+
+    [HttpGet("api-settings")]
+    public IActionResult GetApiSettings()
+    {
+        return Ok(_apiSettings);
     }
 
     [HttpGet("all")]
@@ -47,6 +58,22 @@ public class BooksController : BaseController
         var result = await _bookService.GetBookByIdWithAuthorsAsync(bookId, cancellationToken);
 
         return HandleResult<BookWithAuthorsResponse>(result);
+    }
+
+    [HttpGet("all/{year}")]
+    public async Task<IActionResult> GetBooksByYear([FromRoute] int year)
+    {
+        var result = await _bookService.GetBooksByYearAsync(year);
+
+        return HandleResult<IEnumerable<BookResponse>>(result);
+    }
+
+    [HttpGet("count-books-by-years")]
+    public async Task<IActionResult> GetCountBooksByYears()
+    {
+        var result = await _bookService.GetCountBooksByYearsAsync();
+
+        return HandleResult<IEnumerable<CountBooksByYearsResponse>>(result);
     }
 
     [HttpPost("create")]
