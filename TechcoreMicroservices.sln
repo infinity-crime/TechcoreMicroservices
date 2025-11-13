@@ -17,6 +17,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookService.Books.API", "src\TechcoreMicroservices.BookService\TechcoreMicroservices.BookService.Books.API\TechcoreMicroservices.BookService.Books.API.csproj", "{08507E04-AF0C-79CD-7EBB-4C524AD73433}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{754FC069-D67B-A9D7-50A1-8D1CA196D8F1}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookService.Authors.API", "src\TechcoreMicroservices.BookService\TechcoreMicroservices.BookService.Authors.API\TechcoreMicroservices.BookService.Authors.API.csproj", "{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +50,10 @@ Global
 		{08507E04-AF0C-79CD-7EBB-4C524AD73433}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{08507E04-AF0C-79CD-7EBB-4C524AD73433}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08507E04-AF0C-79CD-7EBB-4C524AD73433}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +65,7 @@ Global
 		{4F041A2B-CD8C-4A02-901D-C18DC4A7D751} = {1979A07D-2102-44D7-AC6E-932D110EF313}
 		{1B2DCB66-8D05-40C3-A8A1-B42FE8756E76} = {1979A07D-2102-44D7-AC6E-932D110EF313}
 		{08507E04-AF0C-79CD-7EBB-4C524AD73433} = {1979A07D-2102-44D7-AC6E-932D110EF313}
+		{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3} = {1979A07D-2102-44D7-AC6E-932D110EF313}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59B02EA6-E133-4524-A182-E53FB66C8AA3}

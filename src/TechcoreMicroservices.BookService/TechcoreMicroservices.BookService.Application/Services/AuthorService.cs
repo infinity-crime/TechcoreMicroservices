@@ -101,7 +101,7 @@ public class AuthorService : IAuthorService
         }
     }
 
-    public async Task<Result<AuthorResponse>> GetAuthorById(Guid authorId, CancellationToken cancellationToken = default)
+    public async Task<Result<AuthorResponse>> GetAuthorByIdAsync(Guid authorId, CancellationToken cancellationToken = default)
     {
         try
         {

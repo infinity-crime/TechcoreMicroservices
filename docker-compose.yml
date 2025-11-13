@@ -1,0 +1,55 @@
+services:
+
+  postgres:	
+    image: postgres:16
+    container_name: TechcoreMicroservices-PostgresContainer
+    restart: always
+    ports:
+      - "5433:5432"
+    volumes:
+      - BooksKeeper-Db-Data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: postgresDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 554034
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+  redis:
+    image: redis:7-alpine
+    container_name: TechcoreMicroservices-RedisContainer
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+  
+  mongodb:
+    image: mongo:7.0
+    container_name: TechcoreMicroservices-MongoContainer
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: ProductReviewsDB
+    volumes:
+      - mongo-data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: TechcoreMicroservices-RabbitMqContainer
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: rabbit
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq/mnesia
+
+volumes:
+  BooksKeeper-Db-Data:
+  redis-data:
+  mongo-data:
+  rabbitmq-data: 
