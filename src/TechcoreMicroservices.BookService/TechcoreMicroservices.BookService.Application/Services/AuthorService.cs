@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechcoreMicroservices.BookService.Application.Common.Errors;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence;
+using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Redis;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 using TechcoreMicroservices.BookService.Contracts.Requests.Author;
 using TechcoreMicroservices.BookService.Contracts.Responses.Author;
@@ -22,12 +23,18 @@ public class AuthorService : IAuthorService
     private readonly IAuthorRepository _authorRepository;
     private readonly IBookRepository _bookRepository;
 
+    private readonly ICacheService _cache;
+
     private readonly ILogger<AuthorService> _logger;
 
-    public AuthorService(IAuthorRepository authorRepository, IBookRepository bookRepository, ILogger<AuthorService> logger)
+    public AuthorService(IAuthorRepository authorRepository, 
+        IBookRepository bookRepository,
+        ICacheService cache,
+        ILogger<AuthorService> logger)
     {
         _authorRepository = authorRepository;
         _bookRepository = bookRepository;
+        _cache = cache;
         _logger = logger;
     }
 
@@ -61,6 +68,8 @@ public class AuthorService : IAuthorService
                 return Result.Fail(new NotFoundError($"Author with ID '{authorId}' was not found."));
 
             await _authorRepository.DeleteAsync(author, cancellationToken);
+
+            await _cache.RemoveAsync($"author:{authorId}");
 
             return Result.Ok();
         }
@@ -103,11 +112,22 @@ public class AuthorService : IAuthorService
 
     public async Task<Result<AuthorResponse>> GetAuthorByIdAsync(Guid authorId, CancellationToken cancellationToken = default)
     {
+        var cachedAuthor = await _cache.GetAsync<AuthorResponse>($"author:{authorId}");
+        if(cachedAuthor is not null)
+        {
+            _logger.LogInformation("Author get from Redis");
+            return Result.Ok(cachedAuthor);
+        }
+
         try
         {
             var author = await _authorRepository.GetByIdAsync(authorId, false, false, cancellationToken);
             if (author is null)
                 return Result.Fail(new NotFoundError($"Author with ID '{authorId}' was not found."));
+
+            _logger.LogInformation("Author get from Postgres");
+
+            await _cache.SetAsync($"author:{authorId}", MapToResponse(author), TimeSpan.FromMinutes(10));
 
             return Result.Ok(MapToResponse(author));
         }
@@ -180,6 +200,8 @@ public class AuthorService : IAuthorService
             author.ChangeLastName(request.LastName);
 
             await _authorRepository.UpdateAsync(author, cancellationToken);
+
+            await _cache.RemoveAsync($"author:{request.Id}");
 
             return Result.Ok();
         }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using TechcoreMicroservices.BookService.Application.Common.Errors;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Dapper;
+using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Redis;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 using TechcoreMicroservices.BookService.Contracts.Requests.Book;
 using TechcoreMicroservices.BookService.Contracts.Responses.Author;
@@ -26,16 +27,20 @@ public class BookService : IBookService
     private readonly IBookDapperRepository _bookDapperRepository;
     private readonly IAuthorRepository _authorRepository;
 
+    private readonly ICacheService _cache;
+
     private readonly ILogger<BookService> _logger;
 
     public BookService(IBookRepository bookRepository, 
         IBookDapperRepository bookDapperRepository,
-        IAuthorRepository authorRepository, 
+        IAuthorRepository authorRepository,
+        ICacheService cache,
         ILogger<BookService> logger)
     {
         _bookRepository = bookRepository;
         _bookDapperRepository = bookDapperRepository;
         _authorRepository = authorRepository;
+        _cache = cache;
         _logger = logger;
     }
 
@@ -125,6 +130,8 @@ public class BookService : IBookService
 
             await _bookRepository.DeleteAsync(book, cancellationToken);
 
+            await _cache.RemoveAsync($"book:{bookId}");
+
             return Result.Ok();
         }
         catch(Exception ex)
@@ -166,11 +173,22 @@ public class BookService : IBookService
 
     public async Task<Result<BookResponse>> GetBookByIdAsync(Guid bookId, CancellationToken cancellationToken = default)
     {
+        var cachedBook = await _cache.GetAsync<BookResponse>($"book:{bookId}");
+        if(cachedBook is not null)
+        {
+            _logger.LogInformation("Book get from Redis");
+            return Result.Ok(cachedBook);
+        }
+
         try
         {
             var book = await _bookRepository.GetByIdAsync(bookId, false, false, cancellationToken);
             if(book is null)
                 return Result.Fail(new NotFoundError($"Book with ID '{bookId}' was not found."));
+
+            _logger.LogInformation("Book get from Postgres");
+
+            await _cache.SetAsync($"book:{bookId}", MapToResponse(book), TimeSpan.FromMinutes(10));
 
             return Result.Ok(MapToResponse(book));
         }
@@ -275,6 +293,8 @@ public class BookService : IBookService
             book.ChangeYear(request.Year);
 
             await _bookRepository.UpdateAsync(book, cancellationToken);
+
+            await _cache.RemoveAsync($"book:{request.Id}");
 
             return Result.Ok();
         }

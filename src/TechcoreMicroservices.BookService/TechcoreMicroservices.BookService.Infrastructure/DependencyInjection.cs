@@ -8,7 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Dapper;
+using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Redis;
 using TechcoreMicroservices.BookService.Infrastructure.Data;
+using TechcoreMicroservices.BookService.Infrastructure.Data.Cache;
 using TechcoreMicroservices.BookService.Infrastructure.Data.Repositories.Dapper;
 using TechcoreMicroservices.BookService.Infrastructure.Data.Repositories.EFCore;
 
@@ -22,6 +24,8 @@ namespace TechcoreMicroservices.BookService.Infrastructure
 
             AddEfCoreRepositories(services);
             AddDapperRepositories(services);
+
+            AddRedisCaching(services, configuration);
 
             return services;
         }
@@ -46,6 +50,22 @@ namespace TechcoreMicroservices.BookService.Infrastructure
         private static void AddDapperRepositories(IServiceCollection services)
         {
             services.AddScoped<IBookDapperRepository, BookDapperRepository>();
+        }
+
+        private static void AddRedisCaching(IServiceCollection services, IConfiguration configuration)
+        {
+            // Получение настроек Redis из конфигурации
+            var redisConnectionString = configuration["Redis:RedisConnectionString"];
+            var instanceName = configuration["Redis:InstanceName"];
+
+            // Регистрация кэша Redis
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = redisConnectionString;
+                options.InstanceName = instanceName;
+            });
+
+            services.AddScoped<ICacheService, RedisDistributedCacheService>();
         }
     }
 }
