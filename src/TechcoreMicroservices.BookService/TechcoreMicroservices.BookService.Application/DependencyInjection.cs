@@ -7,8 +7,10 @@ using System.Text;
 using System.Threading.Tasks;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.HttpServices;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
+using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services.Identity;
 using TechcoreMicroservices.BookService.Application.HttpServices;
 using TechcoreMicroservices.BookService.Application.Services;
+using TechcoreMicroservices.BookService.Application.Services.Identity;
 
 namespace TechcoreMicroservices.BookService.Application
 {
@@ -29,6 +31,7 @@ namespace TechcoreMicroservices.BookService.Application
             services.AddScoped<IBookService, TechcoreMicroservices.BookService.Application.Services.BookService>();
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<IBookDetailsService, BookDetailsService>();
+            services.AddScoped<IUserService, UserService>();
         }
 
         private static void AddHttpClientFactory(IServiceCollection services)

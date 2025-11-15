@@ -14,6 +14,8 @@ using TechcoreMicroservices.BookService.Infrastructure.Data;
 using TechcoreMicroservices.BookService.Infrastructure.Data.Cache;
 using TechcoreMicroservices.BookService.Infrastructure.Data.Repositories.Dapper;
 using TechcoreMicroservices.BookService.Infrastructure.Data.Repositories.EFCore;
+using Microsoft.AspNetCore.Identity;
+using TechcoreMicroservices.BookService.Domain.Entities.Identity;
 
 namespace TechcoreMicroservices.BookService.Infrastructure
 {
@@ -22,6 +24,8 @@ namespace TechcoreMicroservices.BookService.Infrastructure
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             AddDbContext(services, configuration);
+
+            AddIdentity(services);
 
             AddEfCoreRepositories(services);
             AddDapperRepositories(services);
@@ -67,6 +71,13 @@ namespace TechcoreMicroservices.BookService.Infrastructure
             });
 
             services.AddScoped<ICacheService, RedisDistributedCacheService>();
+        }
+
+        private static void AddIdentity(IServiceCollection services)
+        {
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
         }
     }
 }
