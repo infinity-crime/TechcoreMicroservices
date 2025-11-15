@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using System.Security.Claims;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 using TechcoreMicroservices.BookService.Application.Common.Settings;
 using TechcoreMicroservices.BookService.Books.API.Controllers.Common;
@@ -27,6 +28,21 @@ public class BooksController : BaseController
         _bookService = bookService;
         _bookDetailsService = bookDetailsService;
         _apiSettings = apiSettings.Value;
+    }
+
+    [HttpGet("give-my-info")]
+    public IActionResult GetUserInfoFromToken()
+    {
+        var info = new
+        {
+            Id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+            UserName = User.Identity?.Name,
+            Email = User.FindFirst(ClaimTypes.Email)?.Value,
+            DateOfBirth = User.FindFirst(ClaimTypes.DateOfBirth)?.Value,
+            Roles = User.FindAll(ClaimTypes.Role).Select(c => c.Value).ToList()
+        };
+
+        return Ok(info);
     }
 
     [HttpGet("api-settings")]
@@ -92,6 +108,7 @@ public class BooksController : BaseController
     }
 
     [HttpPost("create")]
+    [Authorize(Policy = "OlderThan18")]
     public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request, CancellationToken cancellationToken)
     {
         var result = await _bookService.CreateBookAsync(request, cancellationToken);
@@ -124,6 +141,7 @@ public class BooksController : BaseController
     }
 
     [HttpDelete("delete/{bookId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> DeleteBook([FromRoute] Guid bookId, CancellationToken cancellationToken)
     {
         var result = await _bookService.DeleteBookByIdAsync(bookId, cancellationToken);

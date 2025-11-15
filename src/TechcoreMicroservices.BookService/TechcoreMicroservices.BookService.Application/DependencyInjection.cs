@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -9,6 +10,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using TechcoreMicroservices.BookService.Application.Authentication;
+using TechcoreMicroservices.BookService.Application.Authorization.Handlers;
+using TechcoreMicroservices.BookService.Application.Authorization.Requirements;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Authentication;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.HttpServices;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
@@ -29,6 +32,7 @@ public static class DependencyInjection
         AddHttpClientFactory(services);
 
         AddAuthentication(services, configuration);
+        AddAuthorization(services);
 
         return services;
     }
@@ -75,7 +79,15 @@ public static class DependencyInjection
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
+    }
 
-        services.AddAuthorization();
+    private static void AddAuthorization(IServiceCollection services)
+    {
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("OlderThan18", policy => policy.Requirements.Add(new AgeRequirement(18)));
+        });
+
+        services.AddSingleton<IAuthorizationHandler, AgeHandler>();
     }
 }
