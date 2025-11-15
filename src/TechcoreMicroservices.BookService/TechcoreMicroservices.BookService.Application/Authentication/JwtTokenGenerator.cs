@@ -25,8 +25,10 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _userManager = userManager;
     }
 
-    public string GenerateToken(User user)
+    public async Task<string> GenerateToken(User user)
     {
+        var userRoles = await _userManager.GetRolesAsync(user);
+
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id),
@@ -34,6 +36,8 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new(ClaimTypes.Email, user.Email!),
             new(ClaimTypes.DateOfBirth, user.DateOfBirth.ToString("yyyy-MM-dd"))
         };
+
+        claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Secret));
         var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

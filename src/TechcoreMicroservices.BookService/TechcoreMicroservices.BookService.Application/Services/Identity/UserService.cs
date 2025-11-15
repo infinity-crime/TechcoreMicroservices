@@ -39,7 +39,7 @@ public class UserService : IUserService
         if (!signInResult.Succeeded)
             return Result.Fail(new ValidationError("The provided credentials are invalid"));
 
-        var token = _tokenGenerator.GenerateToken(user);
+        var token = await _tokenGenerator.GenerateToken(user);
 
         return Result.Ok(new UserResponse(user.Email!, user.DateOfBirth, token));
     }
@@ -61,6 +61,8 @@ public class UserService : IUserService
 
             return Result.Fail(new ValidationError(errorMessage));
         }
+
+        await _userManager.AddToRoleAsync(newUser, "DefaultUser");
 
         return Result.Ok(identityResult);
     }

@@ -9,5 +9,5 @@ namespace TechcoreMicroservices.BookService.Application.Common.Interfaces.Authen
 
 public interface IJwtTokenGenerator
 {
-    string GenerateToken(User user);
+    Task<string> GenerateToken(User user);
 }

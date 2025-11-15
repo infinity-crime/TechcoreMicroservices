@@ -38,7 +38,6 @@ public static class DependencyInjection
         services.AddScoped<IBookService, TechcoreMicroservices.BookService.Application.Services.BookService>();
         services.AddScoped<IAuthorService, AuthorService>();
         services.AddScoped<IBookDetailsService, BookDetailsService>();
-        services.AddScoped<IUserService, UserService>();
     }
 
     private static void AddHttpClientFactory(IServiceCollection services)
@@ -61,10 +60,10 @@ public static class DependencyInjection
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = false,
 
                 ValidIssuer = configuration["JwtSettings:Issuer"],
                 ValidAudience = configuration["JwtSettings:Audience"],
@@ -73,5 +72,10 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IRoleService, RoleService>();
+
+        services.AddAuthorization();
     }
 }

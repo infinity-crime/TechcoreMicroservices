@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
@@ -11,6 +12,7 @@ using TechcoreMicroservices.BookService.Contracts.Responses.BookDetails;
 namespace TechcoreMicroservices.BookService.Books.API.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 public class BooksController : BaseController
 {
     private readonly IBookService _bookService;
