@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 
 namespace TechcoreMicroservices.BookService.Contracts.Responses.User;
 
-public record UserResponse(string Email, DateOnly DateOfBirth);
+public record UserResponse(string Email, DateOnly DateOfBirth, string Token);

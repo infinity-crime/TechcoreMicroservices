@@ -8,10 +8,11 @@ using TechcoreMicroservices.BookService.Application.Common.Settings;
 var builder = WebApplication.CreateBuilder(args);
 {
     builder.Services.AddInfrastructure(builder.Configuration);
-    builder.Services.AddApplication();
+    builder.Services.AddApplication(builder.Configuration);
 
     // Читаем конфигурацию с appsettings в наши POCO классы из слоя Application
     builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
+    builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
     // Регистрация FluentValidation и кастомных валидаторов
     builder.Services.AddFluentValidationAutoValidation();
