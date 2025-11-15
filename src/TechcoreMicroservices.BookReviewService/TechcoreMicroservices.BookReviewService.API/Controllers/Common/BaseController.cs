@@ -1,10 +1,9 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Runtime.CompilerServices;
-using TechcoreMicroservices.BookService.Application.Common.Errors;
+using TechcoreMicroservices.BookReviewService.Application.Common.Errors;
 
-namespace TechcoreMicroservices.BookService.Books.API.Controllers.Common;
+namespace TechcoreMicroservices.BookReviewService.API.Controllers.Common;
 
 [ApiController]
 public class BaseController : ControllerBase
@@ -35,10 +34,7 @@ public class BaseController : ControllerBase
             NotFoundError notFoundError =>
                 CreateProblemDetailsResult(notFoundError, notFoundError.StatusCode, notFoundError.Message, notFoundError.ErrorCode),
 
-            ConflictError conflictError =>
-                CreateProblemDetailsResult(conflictError, conflictError.StatusCode, conflictError.Message, conflictError.ErrorCode),
-
-            DatabaseError databaseError =>
+            MongoDbError databaseError =>
                 CreateProblemDetailsResult(databaseError, databaseError.StatusCode, databaseError.Message, databaseError.ErrorCode),
 
             _ => CreateProblemDetailsResult(new Error(""), StatusCodes.Status500InternalServerError, "Internal Server Error", "")
@@ -55,7 +51,7 @@ public class BaseController : ControllerBase
             Type = $"https://www.webfx.com/web-development/glossary/http-status-codes/what-is-a-{statusCode}-status-code/"
         };
 
-        if(error.Metadata?.Count > 0)
+        if (error.Metadata?.Count > 0)
         {
             problemDetails.Extensions["errors"] = error.Metadata;
         }

@@ -24,6 +24,18 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решен
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookService.Authors.API", "src\TechcoreMicroservices.BookService\TechcoreMicroservices.BookService.Authors.API\TechcoreMicroservices.BookService.Authors.API.csproj", "{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TechcoreMicroservices.BookReviewService", "TechcoreMicroservices.BookReviewService", "{4C127F21-9FEC-4505-A860-6E1BE240F8A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookReviewService.Domain", "src\TechcoreMicroservices.BookReviewService\TechcoreMicroservices.BookReviewService.Domain\TechcoreMicroservices.BookReviewService.Domain.csproj", "{83E6469B-DBC7-440E-9EC1-F3B504DCF964}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookReviewService.Application", "src\TechcoreMicroservices.BookReviewService\TechcoreMicroservices.BookReviewService.Application\TechcoreMicroservices.BookReviewService.Application.csproj", "{9FC599B7-4CC0-4C50-84C9-C47FB9C0AAAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookReviewService.Contracts", "src\TechcoreMicroservices.BookReviewService\TechcoreMicroservices.BookReviewService.Contracts\TechcoreMicroservices.BookReviewService.Contracts.csproj", "{45FB8AFB-52CC-42AF-8109-557ED535551F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookReviewService.Infrastructure", "src\TechcoreMicroservices.BookReviewService\TechcoreMicroservices.BookReviewService.Infrastructure\TechcoreMicroservices.BookReviewService.Infrastructure.csproj", "{98B407BA-112A-4E8F-B4E8-F38F577D0051}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookReviewService.API", "src\TechcoreMicroservices.BookReviewService\TechcoreMicroservices.BookReviewService.API\TechcoreMicroservices.BookReviewService.API.csproj", "{EBAF6419-B2CA-4DC6-AC27-A4BBF7F36DC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -54,6 +66,26 @@ Global
 		{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{83E6469B-DBC7-440E-9EC1-F3B504DCF964}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{83E6469B-DBC7-440E-9EC1-F3B504DCF964}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{83E6469B-DBC7-440E-9EC1-F3B504DCF964}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{83E6469B-DBC7-440E-9EC1-F3B504DCF964}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FC599B7-4CC0-4C50-84C9-C47FB9C0AAAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FC599B7-4CC0-4C50-84C9-C47FB9C0AAAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FC599B7-4CC0-4C50-84C9-C47FB9C0AAAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FC599B7-4CC0-4C50-84C9-C47FB9C0AAAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45FB8AFB-52CC-42AF-8109-557ED535551F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45FB8AFB-52CC-42AF-8109-557ED535551F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45FB8AFB-52CC-42AF-8109-557ED535551F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45FB8AFB-52CC-42AF-8109-557ED535551F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98B407BA-112A-4E8F-B4E8-F38F577D0051}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98B407BA-112A-4E8F-B4E8-F38F577D0051}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98B407BA-112A-4E8F-B4E8-F38F577D0051}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98B407BA-112A-4E8F-B4E8-F38F577D0051}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBAF6419-B2CA-4DC6-AC27-A4BBF7F36DC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBAF6419-B2CA-4DC6-AC27-A4BBF7F36DC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBAF6419-B2CA-4DC6-AC27-A4BBF7F36DC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBAF6419-B2CA-4DC6-AC27-A4BBF7F36DC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +98,12 @@ Global
 		{1B2DCB66-8D05-40C3-A8A1-B42FE8756E76} = {1979A07D-2102-44D7-AC6E-932D110EF313}
 		{08507E04-AF0C-79CD-7EBB-4C524AD73433} = {1979A07D-2102-44D7-AC6E-932D110EF313}
 		{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3} = {1979A07D-2102-44D7-AC6E-932D110EF313}
+		{4C127F21-9FEC-4505-A860-6E1BE240F8A9} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{83E6469B-DBC7-440E-9EC1-F3B504DCF964} = {4C127F21-9FEC-4505-A860-6E1BE240F8A9}
+		{9FC599B7-4CC0-4C50-84C9-C47FB9C0AAAA} = {4C127F21-9FEC-4505-A860-6E1BE240F8A9}
+		{45FB8AFB-52CC-42AF-8109-557ED535551F} = {4C127F21-9FEC-4505-A860-6E1BE240F8A9}
+		{98B407BA-112A-4E8F-B4E8-F38F577D0051} = {4C127F21-9FEC-4505-A860-6E1BE240F8A9}
+		{EBAF6419-B2CA-4DC6-AC27-A4BBF7F36DC1} = {4C127F21-9FEC-4505-A860-6E1BE240F8A9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59B02EA6-E133-4524-A182-E53FB66C8AA3}
