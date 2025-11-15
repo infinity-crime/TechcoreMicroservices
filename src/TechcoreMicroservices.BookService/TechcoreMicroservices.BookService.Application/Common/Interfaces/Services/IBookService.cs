@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TechcoreMicroservices.BookService.Contracts.Requests.Book;
 using TechcoreMicroservices.BookService.Contracts.Responses.Book;
+using TechcoreMicroservices.BookService.Contracts.Responses.BookDetails;
 
 namespace TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 

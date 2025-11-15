@@ -41,7 +41,7 @@ public class BaseController : ControllerBase
             DatabaseError databaseError =>
                 CreateProblemDetailsResult(databaseError, databaseError.StatusCode, databaseError.Message, databaseError.ErrorCode),
 
-            _ => CreateProblemDetailsResult(new Error(""), StatusCodes.Status500InternalServerError, "Internal Server Error", "")
+            _ => CreateProblemDetailsResult(new Error(""), StatusCodes.Status500InternalServerError, error.Message, "")
         };
     }
 

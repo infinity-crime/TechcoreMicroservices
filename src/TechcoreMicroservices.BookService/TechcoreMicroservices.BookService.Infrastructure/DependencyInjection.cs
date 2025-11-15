@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechcoreMicroservices.BookService.Application.Common.Interfaces.HttpServices;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Dapper;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Redis;

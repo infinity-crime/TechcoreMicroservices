@@ -6,6 +6,7 @@ using TechcoreMicroservices.BookService.Application.Common.Settings;
 using TechcoreMicroservices.BookService.Books.API.Controllers.Common;
 using TechcoreMicroservices.BookService.Contracts.Requests.Book;
 using TechcoreMicroservices.BookService.Contracts.Responses.Book;
+using TechcoreMicroservices.BookService.Contracts.Responses.BookDetails;
 
 namespace TechcoreMicroservices.BookService.Books.API.Controllers;
 
@@ -13,12 +14,16 @@ namespace TechcoreMicroservices.BookService.Books.API.Controllers;
 public class BooksController : BaseController
 {
     private readonly IBookService _bookService;
+    private readonly IBookDetailsService _bookDetailsService;
 
     private readonly ApiSettings _apiSettings;
 
-    public BooksController(IBookService bookService, IOptions<ApiSettings> apiSettings)
+    public BooksController(IBookService bookService,
+        IBookDetailsService bookDetailsService,
+        IOptions<ApiSettings> apiSettings)
     {
         _bookService = bookService;
+        _bookDetailsService = bookDetailsService;
         _apiSettings = apiSettings.Value;
     }
 
@@ -74,6 +79,14 @@ public class BooksController : BaseController
         var result = await _bookService.GetCountBooksByYearsAsync();
 
         return HandleResult<IEnumerable<CountBooksByYearsResponse>>(result);
+    }
+
+    [HttpGet("{bookId}/details")]
+    public async Task<IActionResult> GetBookDetails([FromRoute] Guid bookId, CancellationToken cancellationToken)
+    {
+        var result = await _bookDetailsService.GetBookDetailsAsync(bookId, cancellationToken);
+
+        return HandleResult<BookDetailsResponse>(result);
     }
 
     [HttpPost("create")]

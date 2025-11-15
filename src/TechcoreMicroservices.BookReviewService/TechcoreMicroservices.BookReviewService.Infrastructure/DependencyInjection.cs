@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TechcoreMicroservices.BookReviewService.Application.Common.Interfaces.Persistence;
+using TechcoreMicroservices.BookReviewService.Infrastructure.BackgroundServices;
 using TechcoreMicroservices.BookReviewService.Infrastructure.Data.Repositories;
 
 namespace TechcoreMicroservices.BookReviewService.Infrastructure;
@@ -17,7 +18,11 @@ public static class DependencyInjection
     {
         AddMongoDb(services, configuration);
 
+        AddRedisCaching(services, configuration);
+
         AddRepositories(services);
+
+        services.AddHostedService<AverageRatingCalculatorService>();
 
         return services;
     }
@@ -34,5 +39,19 @@ public static class DependencyInjection
         var mongoDatabaseName = configuration["Mongo:DatabaseName"];
 
         services.AddSingleton<IMongoClient>(new MongoClient(mongoConnectionString));
+    }
+
+    private static void AddRedisCaching(IServiceCollection services, IConfiguration configuration)
+    {
+        // Получение настроек Redis из конфигурации
+        var redisConnectionString = configuration["Redis:RedisConnectionString"];
+        var instanceName = configuration["Redis:InstanceName"];
+
+        // Регистрация кэша Redis
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisConnectionString;
+            options.InstanceName = instanceName;
+        });
     }
 }

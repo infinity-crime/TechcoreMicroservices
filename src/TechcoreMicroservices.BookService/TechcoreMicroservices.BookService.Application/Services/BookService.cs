@@ -7,6 +7,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using TechcoreMicroservices.BookService.Application.Common.Errors;
+using TechcoreMicroservices.BookService.Application.Common.Interfaces.HttpServices;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Dapper;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Redis;
@@ -15,7 +16,6 @@ using TechcoreMicroservices.BookService.Contracts.Requests.Book;
 using TechcoreMicroservices.BookService.Contracts.Responses.Author;
 using TechcoreMicroservices.BookService.Contracts.Responses.Book;
 using TechcoreMicroservices.BookService.Domain.Entities;
-using TechcoreMicroservices.BookService.Domain.Exceptions.AuthorExceptions;
 using TechcoreMicroservices.BookService.Domain.Exceptions.BookExceptions;
 using TechcoreMicroservices.BookService.Domain.Exceptions.CommonExceptions;
 
