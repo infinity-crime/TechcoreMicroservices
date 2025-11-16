@@ -31,16 +31,14 @@ public class BookReviewHttpService : IBookReviewHttpService
     public async Task<Result<IEnumerable<BookReviewResponse>>> GetAllByBookIdAsync(Guid bookId, CancellationToken cancellationToken = default)
     {
         var response = await _httpClient.GetAsync($"/api/reviews/book/{bookId}");
-        if (response.StatusCode == HttpStatusCode.NotFound || response.StatusCode == HttpStatusCode.InternalServerError)
+        if (response.IsSuccessStatusCode)
         {
-            var errorResponse = await response.Content.ReadFromJsonAsync<ErrorResponse>(_jsonSerializerOptions, cancellationToken);
-
-            return Result.Fail(errorResponse?.Title);
+            var successResponse = await response.Content.ReadFromJsonAsync<IEnumerable<BookReviewResponse>>(_jsonSerializerOptions, cancellationToken);
+            return Result.Ok(successResponse!);
         }
 
-        var successResponse = await response.Content.ReadFromJsonAsync<IEnumerable<BookReviewResponse>>(_jsonSerializerOptions, cancellationToken);
-
-        return Result.Ok(successResponse!);
+        var errorContent = await response.Content.ReadAsStringAsync(cancellationToken);
+        return Result.Fail<IEnumerable<BookReviewResponse>>($"HTTP Error: {response.StatusCode} - {errorContent}");
     }
 
     private record ErrorResponse(string Title);

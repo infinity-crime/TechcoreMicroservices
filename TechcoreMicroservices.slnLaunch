@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Новый профиль",
+    "Projects": [
+      {
+        "Path": "src\\TechcoreMicroservices.gRpcServices\\GrpcService1\\GrpcService1.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\TechcoreMicroservices.gRpcServices\\GrpcService2\\GrpcService2.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]
