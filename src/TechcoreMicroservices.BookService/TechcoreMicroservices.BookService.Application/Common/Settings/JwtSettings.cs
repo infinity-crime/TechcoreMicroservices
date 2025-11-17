@@ -1,0 +1,18 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TechcoreMicroservices.BookService.Application.Common.Settings;
+
+public class JwtSettings
+{
+    [Required]
+    public string Issuer { get; set; } = string.Empty;
+
+    [Required]
+    public string Audience { get; set; } = string.Empty;
+
+    [Required]
+    public int ExpInMinutes { get; set; }
+
+    [Required]
+    public string Secret { get; set; } = string.Empty;
+}

@@ -1,0 +1,6 @@
+@TechcoreMicroservices.BookOrderService.API_HostAddress = http://localhost:5093
+
+GET {{TechcoreMicroservices.BookOrderService.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
