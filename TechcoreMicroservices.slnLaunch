@@ -3,11 +3,15 @@
     "Name": "Новый профиль",
     "Projects": [
       {
-        "Path": "src\\TechcoreMicroservices.gRpcServices\\GrpcService1\\GrpcService1.csproj",
+        "Path": "src\\TechcoreMicroservices.BookService\\TechcoreMicroservices.BookService.Books.API\\TechcoreMicroservices.BookService.Books.API.csproj",
         "Action": "Start"
       },
       {
-        "Path": "src\\TechcoreMicroservices.gRpcServices\\GrpcService2\\GrpcService2.csproj",
+        "Path": "src\\TechcoreMicroservices.BookOrderService\\TechcoreMicroservices.BookOrderService.API\\TechcoreMicroservices.BookOrderService.API.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "src\\TechcoreMicroservices.BookReviewService\\TechcoreMicroservices.BookReviewService.API\\TechcoreMicroservices.BookReviewService.API.csproj",
         "Action": "Start"
       }
     ]

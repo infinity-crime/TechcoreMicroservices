@@ -13,6 +13,9 @@ public class Book : BaseEntity<Guid>
     public string Title { get; private set; } = string.Empty;
     public int Year { get; private set; }
 
+    // Новое поле для резервирования книг из микросервиса заказов
+    public bool IsAvailable { get; private set; } = true;
+
     private readonly List<Author> _authors = new();
     public IReadOnlyCollection<Author> Authors => _authors.AsReadOnly();
 
@@ -79,6 +82,14 @@ public class Book : BaseEntity<Guid>
     public void DeleteAllAuthors()
     {
         _authors.Clear();
+    }
+
+    public void ReserveBook()
+    {
+        if (!IsAvailable)
+            throw new DomainBookException("BOOK_RESERVED", "This book reserved!");
+
+        IsAvailable = false;
     }
 
     private static void ValidateParameters(Guid id, string title, int year)

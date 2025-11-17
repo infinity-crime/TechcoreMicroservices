@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MassTransit;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using System;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 using TechcoreMicroservices.BookReviewService.Application.Common.Interfaces.Persistence;
 using TechcoreMicroservices.BookReviewService.Infrastructure.BackgroundServices;
 using TechcoreMicroservices.BookReviewService.Infrastructure.Data.Repositories;
+using TechcoreMicroservices.BookReviewService.Infrastructure.RabbitMQ.Consumers;
 
 namespace TechcoreMicroservices.BookReviewService.Infrastructure;
 
@@ -23,6 +25,8 @@ public static class DependencyInjection
         AddRepositories(services);
 
         services.AddHostedService<AverageRatingCalculatorService>();
+
+        AddMassTransit(services, configuration);
 
         return services;
     }
@@ -52,6 +56,29 @@ public static class DependencyInjection
         {
             options.Configuration = redisConnectionString;
             options.InstanceName = instanceName;
+        });
+    }
+
+    private static void AddMassTransit(IServiceCollection services, IConfiguration configuration)
+    {
+        // Регистрация MassTransit
+        var rabbitUsername = configuration["RabbitMqSettings:Username"];
+        var rabbitPassword = configuration["RabbitMqSettings:Password"];
+
+        services.AddMassTransit(options =>
+        {
+            options.AddConsumer<OrderCreatedConsumer>();
+
+            options.UsingRabbitMq((context, config) =>
+            {
+                config.Host("localhost", 5672, "/", cfg =>
+                {
+                    cfg.Username(rabbitUsername!);
+                    cfg.Password(rabbitPassword!);
+                });
+
+                config.ConfigureEndpoints(context);
+            });
         });
     }
 }

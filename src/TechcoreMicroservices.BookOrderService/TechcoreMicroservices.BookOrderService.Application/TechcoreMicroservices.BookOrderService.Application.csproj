@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentResults" Version="4.0.0" />
+    <PackageReference Include="MassTransit" Version="8.5.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\TechcoreMicroservices.BookOrderService.Contracts\TechcoreMicroservices.BookOrderService.Contracts.csproj" />
+    <ProjectReference Include="..\TechcoreMicroservices.BookOrderService.Domain\TechcoreMicroservices.BookOrderService.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

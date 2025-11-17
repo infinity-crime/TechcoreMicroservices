@@ -16,6 +16,8 @@ using TechcoreMicroservices.BookService.Infrastructure.Data.Repositories.Dapper;
 using TechcoreMicroservices.BookService.Infrastructure.Data.Repositories.EFCore;
 using Microsoft.AspNetCore.Identity;
 using TechcoreMicroservices.BookService.Domain.Entities.Identity;
+using MassTransit;
+using TechcoreMicroservices.BookService.Infrastructure.RabbitMQ.Consumers;
 
 namespace TechcoreMicroservices.BookService.Infrastructure
 {
@@ -31,6 +33,8 @@ namespace TechcoreMicroservices.BookService.Infrastructure
             AddDapperRepositories(services);
 
             AddRedisCaching(services, configuration);
+
+            AddMassTransit(services, configuration);
 
             return services;
         }
@@ -78,6 +82,30 @@ namespace TechcoreMicroservices.BookService.Infrastructure
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
+        }
+
+        private static void AddMassTransit(IServiceCollection services, IConfiguration configuration)
+        {
+            // Регистрация MassTransit
+            var rabbitUsername = configuration["RabbitMqSettings:Username"];
+            var rabbitPassword = configuration["RabbitMqSettings:Password"];
+
+            services.AddMassTransit(options =>
+            {
+                options.AddConsumer<CheckBookAvailabilityConsumer>();
+                options.AddConsumer<BookReservatorConsumer>();
+
+                options.UsingRabbitMq((context, config) =>
+                {
+                    config.Host("localhost", 5672, "/", cfg =>
+                    {
+                        cfg.Username(rabbitUsername!);
+                        cfg.Password(rabbitPassword!);
+                    });
+
+                    config.ConfigureEndpoints(context);
+                });
+            });
         }
     }
 }
