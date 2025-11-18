@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
+using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Kafka;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 using TechcoreMicroservices.BookService.Application.Common.Settings;
 using TechcoreMicroservices.BookService.Books.API.Controllers.Common;
@@ -19,14 +20,19 @@ public class BooksController : BaseController
     private readonly IBookService _bookService;
     private readonly IBookDetailsService _bookDetailsService;
 
+    private readonly IKafkaProducer<BookResponse> _kafkaProducer;
+
     private readonly ApiSettings _apiSettings;
 
     public BooksController(IBookService bookService,
         IBookDetailsService bookDetailsService,
+        IKafkaProducer<BookResponse> kafkaProducer,
         IOptions<ApiSettings> apiSettings)
     {
         _bookService = bookService;
         _bookDetailsService = bookDetailsService;
+        _kafkaProducer = kafkaProducer;
+
         _apiSettings = apiSettings.Value;
     }
 
@@ -71,6 +77,8 @@ public class BooksController : BaseController
     public async Task<IActionResult> GetBookById([FromRoute] Guid bookId, CancellationToken cancellationToken)
     {
         var result = await _bookService.GetBookByIdAsync(bookId, cancellationToken);
+        if (result.IsSuccess)
+            await _kafkaProducer.ProduceAsync(result.Value, cancellationToken);
 
         return HandleResult<BookResponse>(result);
     }

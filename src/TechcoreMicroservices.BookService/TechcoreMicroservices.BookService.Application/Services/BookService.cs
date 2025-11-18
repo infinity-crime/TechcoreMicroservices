@@ -10,6 +10,7 @@ using TechcoreMicroservices.BookService.Application.Common.Errors;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.HttpServices;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Dapper;
+using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Kafka;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistence.Redis;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 using TechcoreMicroservices.BookService.Contracts.Requests.Book;
