@@ -41,7 +41,9 @@ public class KafkaConsumerLoop : IDisposable
         {
             BootstrapServers = options.Value.BootstrapServers,
             GroupId = options.Value.GroupId,
-            AutoOffsetReset = AutoOffsetReset.Earliest
+            AutoOffsetReset = AutoOffsetReset.Earliest,
+            EnableAutoOffsetStore = false,
+            EnableAutoCommit = true
         };
 
         _consumer = new ConsumerBuilder<string, BookResponse>(consumerConfig)
@@ -86,6 +88,8 @@ public class KafkaConsumerLoop : IDisposable
                         };
 
                         await _repository.AddAsync(newAnalytics, token);
+
+                        _consumer.StoreOffset(cr);
 
                         _logger.LogInformation($"Added analytics: BookTitle - {newAnalytics.Title}");
                     };
