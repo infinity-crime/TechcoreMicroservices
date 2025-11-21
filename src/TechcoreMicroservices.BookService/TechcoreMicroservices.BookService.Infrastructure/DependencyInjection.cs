@@ -115,6 +115,6 @@ public static class DependencyInjection
 
     private static void AddKafkaProducer<TMessage>(IServiceCollection services)
     {
-        services.AddSingleton<IKafkaProducer<TMessage>, KafkaProducer<TMessage>>();
+        services.AddSingleton<IKafkaProducer, KafkaProducer>();
     }
 }

@@ -34,6 +34,8 @@ services:
       MONGO_INITDB_DATABASE: ProductReviewsDB
     volumes:
       - mongo-data:/data/db
+    networks:
+      - kafka-net
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -90,6 +92,19 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - kafka-net
+
+  analytics-worker:
+    build:
+      context: .
+      dockerfile: ./src/TechcoreMicroservices.AnalyticsWorkerService/AnalyticService/Dockerfile
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BOOTSTRAP: "kafka:9093"
+      KAFKA_TOPIC: "book_views"
+      KAFKA_GROUP: "analytics-service-group"
     networks:
       - kafka-net
 

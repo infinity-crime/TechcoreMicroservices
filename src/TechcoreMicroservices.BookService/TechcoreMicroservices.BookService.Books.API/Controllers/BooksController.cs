@@ -20,13 +20,13 @@ public class BooksController : BaseController
     private readonly IBookService _bookService;
     private readonly IBookDetailsService _bookDetailsService;
 
-    private readonly IKafkaProducer<BookResponse> _kafkaProducer;
+    private readonly IKafkaProducer _kafkaProducer;
 
     private readonly ApiSettings _apiSettings;
 
     public BooksController(IBookService bookService,
         IBookDetailsService bookDetailsService,
-        IKafkaProducer<BookResponse> kafkaProducer,
+        IKafkaProducer kafkaProducer,
         IOptions<ApiSettings> apiSettings)
     {
         _bookService = bookService;

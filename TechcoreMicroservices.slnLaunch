@@ -5,10 +5,6 @@
       {
         "Path": "src\\TechcoreMicroservices.BookService\\TechcoreMicroservices.BookService.Books.API\\TechcoreMicroservices.BookService.Books.API.csproj",
         "Action": "Start"
-      },
-      {
-        "Path": "src\\TechcoreMicroservices.AnalyticsWorkerService\\AnalyticService\\AnalyticService.csproj",
-        "Action": "Start"
       }
     ]
   }
