@@ -1,4 +1,6 @@
 ﻿using AnalyticService.Deserializers;
+using AnalyticService.Models;
+using AnalyticService.Repositories;
 using AnalyticService.Services.QueueService;
 using AnalyticService.Settings;
 using Confluent.Kafka;
@@ -8,22 +10,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TechcoreMicroservices.BookService.Contracts.Responses.Book;
 
 namespace AnalyticService.Consumers;
 
-public class KafkaConsumerLoop<TMessage> : IDisposable
+public class KafkaConsumerLoop : IDisposable
 {
-    private readonly ILogger<KafkaConsumerLoop<TMessage>> _logger;
+    private readonly ILogger<KafkaConsumerLoop> _logger;
 
     private readonly IBackgroundTaskQueue _taskQueue;
 
-    private readonly IConsumer<string, TMessage> _consumer;
+    private readonly IConsumer<string, BookResponse> _consumer;
     private readonly string _topic;
+
+    private readonly IBookAnalyticsRepository _repository;
 
     private readonly CancellationToken _cancellationToken;
 
-    public KafkaConsumerLoop(ILogger<KafkaConsumerLoop<TMessage>> logger,
+    public KafkaConsumerLoop(ILogger<KafkaConsumerLoop> logger,
         IBackgroundTaskQueue taskQueue,
+        IBookAnalyticsRepository bookAnalyticsRepository,
         IHostApplicationLifetime appLifetime,
         IOptions<KafkaSettings> options)
     {
@@ -38,11 +44,13 @@ public class KafkaConsumerLoop<TMessage> : IDisposable
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
 
-        _consumer = new ConsumerBuilder<string, TMessage>(consumerConfig)
-            .SetValueDeserializer(new DefaultKafkaDeserializer<TMessage>())
+        _consumer = new ConsumerBuilder<string, BookResponse>(consumerConfig)
+            .SetValueDeserializer(new DefaultKafkaDeserializer<BookResponse>())
             .Build();
 
         _topic = options.Value.Topic;
+
+        _repository = bookAnalyticsRepository;
 
         _cancellationToken = appLifetime.ApplicationStopping;
     }
@@ -69,7 +77,17 @@ public class KafkaConsumerLoop<TMessage> : IDisposable
                     {
                         _logger.LogInformation($"Consumed message (ConsumeLoop Method) at {cr.TopicPartitionOffset} with key: {cr.Message.Key}");
 
-                        await ValueTask.CompletedTask;
+                        var newAnalytics = new BookAnalytics
+                        {
+                            Id = Guid.NewGuid(),
+                            BookId = cr.Message.Value.Id,
+                            Title = cr.Message.Value.Title,
+                            Year = cr.Message.Value.Year
+                        };
+
+                        await _repository.AddAsync(newAnalytics, token);
+
+                        _logger.LogInformation($"Added analytics: BookTitle - {newAnalytics.Title}");
                     };
 
                     await _taskQueue.QueueBackgroundWorkItemAsync(workItem);

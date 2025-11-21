@@ -7,14 +7,6 @@
         "Action": "Start"
       },
       {
-        "Path": "src\\TechcoreMicroservices.BookOrderService\\TechcoreMicroservices.BookOrderService.API\\TechcoreMicroservices.BookOrderService.API.csproj",
-        "Action": "Start"
-      },
-      {
-        "Path": "src\\TechcoreMicroservices.BookReviewService\\TechcoreMicroservices.BookReviewService.API\\TechcoreMicroservices.BookReviewService.API.csproj",
-        "Action": "Start"
-      },
-      {
         "Path": "src\\TechcoreMicroservices.AnalyticsWorkerService\\AnalyticService\\AnalyticService.csproj",
         "Action": "Start"
       }
