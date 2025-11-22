@@ -15,6 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
     // Читаем конфигурацию с appsettings в наши POCO классы из слоя Application
     builder.Services.Configure<ApiSettings>(builder.Configuration.GetSection("ApiSettings"));
     builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
+    builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection("KafkaSettings:Book"));
 
     // Регистрация FluentValidation и кастомных валидаторов
     builder.Services.AddFluentValidationAutoValidation();

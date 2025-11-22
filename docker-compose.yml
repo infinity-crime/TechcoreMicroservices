@@ -34,6 +34,8 @@ services:
       MONGO_INITDB_DATABASE: ProductReviewsDB
     volumes:
       - mongo-data:/data/db
+    networks:
+      - kafka-net
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -48,8 +50,70 @@ services:
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq/mnesia
 
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: TechcoreMicroservices-ZookeeperContainer
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - kafka-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: TechcoreMicroservices-KafkaContainer
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_INTERNAL://kafka:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT_INTERNAL
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_DELETE_TOPIC_ENABLE: "true"
+    networks:
+      - kafka-net
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    depends_on:
+      - kafka
+    ports:
+    - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - kafka-net
+
+  analytics-worker:
+    build:
+      context: .
+      dockerfile: ./src/TechcoreMicroservices.AnalyticsWorkerService/AnalyticService/Dockerfile
+    depends_on:
+      - kafka
+    environment:
+      KAFKA_BOOTSTRAP: "kafka:9093"
+      KAFKA_TOPIC: "book_views"
+      KAFKA_GROUP: "analytics-service-group"
+    networks:
+      - kafka-net
+
 volumes:
   BooksKeeper-Db-Data:
   redis-data:
   mongo-data:
   rabbitmq-data: 
+  
+networks:
+  kafka-net:
+    driver: bridge

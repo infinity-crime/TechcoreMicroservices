@@ -20,6 +20,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решения", "Элементы решения", "{754FC069-D67B-A9D7-50A1-8D1CA196D8F1}"
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
+		Kafka_10_module.md = Kafka_10_module.md
+		Kafka_Streams_10_module.md = Kafka_Streams_10_module.md
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookService.Authors.API", "src\TechcoreMicroservices.BookService\TechcoreMicroservices.BookService.Authors.API\TechcoreMicroservices.BookService.Authors.API.csproj", "{4C3749CF-B73E-43C0-BCA6-9A5D6E2763D3}"
@@ -53,6 +55,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookOrderService.Contracts", "src\TechcoreMicroservices.BookOrderService\TechcoreMicroservices.BookOrderService.Contracts\TechcoreMicroservices.BookOrderService.Contracts.csproj", "{C50F09D5-8133-412F-8BBB-15009AB2B890}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.BookOrderService.Application", "src\TechcoreMicroservices.BookOrderService\TechcoreMicroservices.BookOrderService.Application\TechcoreMicroservices.BookOrderService.Application.csproj", "{728A79B9-92A8-4990-A066-2066625F38A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TechcoreMicroservices.AnalyticsWorkerService", "TechcoreMicroservices.AnalyticsWorkerService", "{BE9BD77B-63D5-46F7-B611-EB891D160891}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyticService", "src\TechcoreMicroservices.AnalyticsWorkerService\AnalyticService\AnalyticService.csproj", "{53E58532-B20C-410C-81C4-F7A5DEFC4902}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -132,6 +138,10 @@ Global
 		{728A79B9-92A8-4990-A066-2066625F38A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{728A79B9-92A8-4990-A066-2066625F38A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{728A79B9-92A8-4990-A066-2066625F38A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{53E58532-B20C-410C-81C4-F7A5DEFC4902}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{53E58532-B20C-410C-81C4-F7A5DEFC4902}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{53E58532-B20C-410C-81C4-F7A5DEFC4902}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{53E58532-B20C-410C-81C4-F7A5DEFC4902}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -159,6 +169,8 @@ Global
 		{DD2C9A47-F66F-4DE3-A93C-6F7ED9E611F5} = {E94DF8E4-7496-4925-9990-28790791C72B}
 		{C50F09D5-8133-412F-8BBB-15009AB2B890} = {E94DF8E4-7496-4925-9990-28790791C72B}
 		{728A79B9-92A8-4990-A066-2066625F38A1} = {E94DF8E4-7496-4925-9990-28790791C72B}
+		{BE9BD77B-63D5-46F7-B611-EB891D160891} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
+		{53E58532-B20C-410C-81C4-F7A5DEFC4902} = {BE9BD77B-63D5-46F7-B611-EB891D160891}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59B02EA6-E133-4524-A182-E53FB66C8AA3}
