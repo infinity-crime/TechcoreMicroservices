@@ -37,7 +37,7 @@
       ]
     },
     {
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "UpstreamHttpMethod": [ "Get", "Post", "Put" ],
       "UpstreamPathTemplate": "/books/{everything}",
       "DownstreamPathTemplate": "/api/books/{everything}",
       "DownstreamScheme": "http",
@@ -46,7 +46,30 @@
           "Host": "book-service-books",
           "Port": 8081
         }
-      ]
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamHttpMethod": [ "Delete" ],
+      "UpstreamPathTemplate": "/books/delete/{bookId}",
+      "DownstreamPathTemplate": "/api/books/delete/{bookId}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "book-service-books",
+          "Port": 8081
+        }
+      ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      },
+      "RouteClaimsRequirement": {
+        "role": "Admin"
+      }
     },
     {
       "UpstreamHttpMethod": [ "Post" ],
