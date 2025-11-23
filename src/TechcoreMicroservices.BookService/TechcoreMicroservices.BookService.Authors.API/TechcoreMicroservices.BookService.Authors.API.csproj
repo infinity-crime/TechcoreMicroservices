@@ -4,11 +4,15 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>cba028c2-d107-48ef-bb9e-a8fb5033e709</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
   </ItemGroup>
 

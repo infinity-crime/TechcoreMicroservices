@@ -108,6 +108,16 @@ services:
     networks:
       - kafka-net
 
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./src/TechcoreMicroservices.ApiGateway/TechcoreMicroservices.ApiGateway.OcelotGw/Dockerfile
+    ports:
+      - "5000:80"
+    networks:
+      - internal-net
+
+
 volumes:
   BooksKeeper-Db-Data:
   redis-data:
