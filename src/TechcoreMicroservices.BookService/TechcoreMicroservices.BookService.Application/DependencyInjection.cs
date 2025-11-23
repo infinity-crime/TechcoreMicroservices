@@ -89,8 +89,7 @@ public static class DependencyInjection
 
         services.AddHttpClient<IBookReviewHttpService, BookReviewHttpService>(client =>
         {
-            // ???
-            client.BaseAddress = new Uri("https://localhost:7227");
+            client.BaseAddress = new Uri("http://book-review-service:8081");
         })
         .AddPolicyHandler(policyWrap);
     }
