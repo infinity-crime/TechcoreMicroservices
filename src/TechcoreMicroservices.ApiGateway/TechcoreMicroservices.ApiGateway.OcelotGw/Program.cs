@@ -3,9 +3,17 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 {
-    builder.Configuration.AddEnvironmentVariables(); // добавим возможность перегрузки настроек через env контейнера
+    builder.Configuration
+        .AddEnvironmentVariables()
+        .SetBasePath(builder.Environment.ContentRootPath)
+        .AddOcelot();
 
     builder.Services.AddOcelot(builder.Configuration);
+
+    if(builder.Environment.IsDevelopment())
+    {
+        builder.Logging.AddConsole();
+    }
 }
 
 var app = builder.Build();

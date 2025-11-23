@@ -41,7 +41,7 @@ public class ReviewsController : BaseController
         return HandleResult<IEnumerable<BookReviewResponse>>(result);
     }
 
-    [HttpPost("/create")]
+    [HttpPost("create")]
     public async Task<IActionResult> CreateReview([FromBody] CreateBookReviewRequest request, CancellationToken cancellationToken)
     {
         var result = await _reviewService.CreateReviewAsync(request, cancellationToken);

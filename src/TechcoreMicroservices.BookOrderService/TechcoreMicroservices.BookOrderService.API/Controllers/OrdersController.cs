@@ -25,7 +25,7 @@ public class OrdersController : BaseController
         return HandleResult<IEnumerable<OrderWithItemsResponse>>(result);
     }
 
-    [HttpPost("/create")]
+    [HttpPost("create")]
     public async Task<IActionResult> CreateOrder([FromBody] CreateOrderRequest request, CancellationToken cancellationToken)
     {
         var result = await _orderService.CreateOrderAsync(request, cancellationToken);
