@@ -94,6 +94,43 @@
           "Port": 8081
         }
       ]
+    },
+    {
+      "UpstreamHttpMethod": [ "Get" ],
+      "UpstreamPathTemplate": "/books/{id}",
+      "DownstreamPathTemplate": "/api/books/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "book-service-books",
+          "Port": 8081
+        }
+      ],
+      "Key": "Books",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": []
+      }
+    },
+    {
+      "UpstreamHttpMethod": [ "Get" ],
+      "UpstreamPathTemplate": "/reviews/book/{id}",
+      "DownstreamPathTemplate": "/api/reviews/book/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "book-review-service",
+          "Port": 8081
+        }
+      ],
+      "Key": "Reviews"
+    }
+  ],
+  "Aggregates": [
+    {
+      "UpstreamHttpMethod": [ "Get" ],
+      "UpstreamPathTemplate": "/details/{id}",
+      "RouteKeys": [ "Books", "Reviews" ]
     }
   ],
   "GlobalConfiguration": {
