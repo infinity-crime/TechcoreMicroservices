@@ -118,7 +118,7 @@ services:
   api-gateway:
     build:
       context: .
-      dockerfile: ./src/TechcoreMicroservices.ApiGateway/TechcoreMicroservices.ApiGateway.OcelotGw/Dockerfile
+      dockerfile: ./src/TechcoreMicroservices.ApiGateway/TechcoreMicroservices.ApiGateway.YarpGw/Dockerfile
     ports:
       - "5000:8081"
     environment:
