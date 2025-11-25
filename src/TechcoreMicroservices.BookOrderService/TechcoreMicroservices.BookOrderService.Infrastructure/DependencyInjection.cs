@@ -53,7 +53,7 @@ public static class DependencyInjection
         {
             options.UsingRabbitMq((context, config) =>
             {
-                config.Host("localhost", 5672, "/", cfg =>
+                config.Host("rabbitmq", 5672, "/", cfg =>
                 {
                     cfg.Username(rabbitUsername!);
                     cfg.Password(rabbitPassword!);

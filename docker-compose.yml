@@ -13,6 +13,8 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 554034
       POSTGRES_HOST_AUTH_METHOD: trust
+    networks:
+      - default-net
 
   redis:
     image: redis:7-alpine
@@ -23,6 +25,8 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+    networks:
+      - default-net
   
   mongodb:
     image: mongo:7.0
@@ -35,7 +39,7 @@ services:
     volumes:
       - mongo-data:/data/db
     networks:
-      - kafka-net
+      - default-net
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -49,6 +53,8 @@ services:
       RABBITMQ_DEFAULT_PASS: rabbit
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq/mnesia
+    networks:
+      - default-net
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.3.0
@@ -59,7 +65,7 @@ services:
     ports:
       - "2181:2181"
     networks:
-      - kafka-net
+      - default-net
 
   kafka:
     image: confluentinc/cp-kafka:7.3.0
@@ -79,7 +85,7 @@ services:
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_DELETE_TOPIC_ENABLE: "true"
     networks:
-      - kafka-net
+      - default-net
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -93,7 +99,7 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     networks:
-      - kafka-net
+      - default-net
 
   analytics-worker:
     build:
@@ -105,8 +111,87 @@ services:
       KAFKA_BOOTSTRAP: "kafka:9093"
       KAFKA_TOPIC: "book_views"
       KAFKA_GROUP: "analytics-service-group"
+      ASPNETCORE_ENVIRONMENT: Development
     networks:
-      - kafka-net
+      - default-net
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./src/TechcoreMicroservices.ApiGateway/TechcoreMicroservices.ApiGateway.YarpGw/Dockerfile
+    ports:
+      - "5000:8081"
+    environment:
+      ASPNETCORE_URLS: "http://+:8081"
+      ASPNETCORE_ENVIRONMENT: Development
+    networks:
+      - default-net
+
+  book-order-service:
+    build:
+      context: .
+      dockerfile: ./src/TechcoreMicroservices.BookOrderService/TechcoreMicroservices.BookOrderService.API/Dockerfile
+    depends_on:
+      - postgres
+      - rabbitmq
+    environment:
+      ASPNETCORE_URLS: "http://+:8081"
+      ASPNETCORE_ENVIRONMENT: Development
+    ports:
+      - 5001:8081
+    networks:
+      - default-net
+
+  book-review-service:
+    build:
+      context: .
+      dockerfile: ./src/TechcoreMicroservices.BookReviewService/TechcoreMicroservices.BookReviewService.API/Dockerfile
+    depends_on:
+      - mongodb
+      - redis
+      - postgres
+      - rabbitmq
+    ports:
+      - 5002:8081
+    environment:
+      ASPNETCORE_URLS: "http://+:8081"
+      ASPNETCORE_ENVIRONMENT: Development
+    networks:
+      - default-net
+
+  book-service-books:
+    build:
+      context: .
+      dockerfile: ./src/TechcoreMicroservices.BookService/TechcoreMicroservices.BookService.Books.API/Dockerfile
+    depends_on:
+      - mongodb
+      - redis
+      - postgres
+      - rabbitmq
+    ports:
+      - 5003:8081
+    environment:
+      ASPNETCORE_URLS: "http://+:8081"
+      ASPNETCORE_ENVIRONMENT: Development
+    networks:
+      - default-net
+
+  book-service-authors:
+    build:
+      context: .
+      dockerfile: ./src/TechcoreMicroservices.BookService/TechcoreMicroservices.BookService.Authors.API/Dockerfile
+    depends_on:
+      - mongodb
+      - redis
+      - postgres
+      - rabbitmq
+    ports:
+      - 5004:8081
+    environment:
+      ASPNETCORE_URLS: "http://+:8081"
+      ASPNETCORE_ENVIRONMENT: Development
+    networks:
+      - default-net
 
 volumes:
   BooksKeeper-Db-Data:
@@ -115,5 +200,5 @@ volumes:
   rabbitmq-data: 
   
 networks:
-  kafka-net:
+  default-net:
     driver: bridge
