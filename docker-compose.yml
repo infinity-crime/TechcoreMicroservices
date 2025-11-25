@@ -193,6 +193,16 @@ services:
     networks:
       - default-net
 
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: TechcoreMicroservices-ZipkinContainer
+    ports:
+      - 9411:9411
+    environment:
+      - STORAGE_TYPE=mem
+    networks:
+      - default-net
+
 volumes:
   BooksKeeper-Db-Data:
   redis-data:

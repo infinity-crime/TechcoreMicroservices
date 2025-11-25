@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -83,6 +85,18 @@ var builder = WebApplication.CreateBuilder(args);
             policy.AuthenticationSchemes.Add("Bearer");
         });
     });
+
+    // OpenTelemetry with Zipkin
+    builder.Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource
+            .AddService(serviceName: "api-gateway"))
+        .WithTracing(tracing => tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddZipkinExporter(options =>
+            {
+                options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+            }));
 }
 
 var app = builder.Build();

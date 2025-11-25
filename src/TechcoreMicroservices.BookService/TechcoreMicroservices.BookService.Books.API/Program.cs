@@ -1,11 +1,15 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.OpenApi.Models;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Logs;
+using System.Diagnostics;
+using OpenTelemetry.Metrics;
 using TechcoreMicroservices.BookService.Application;
+using TechcoreMicroservices.BookService.Application.Common.Settings;
 using TechcoreMicroservices.BookService.Books.API.Middleware;
 using TechcoreMicroservices.BookService.Infrastructure;
-using FluentValidation.AspNetCore;
-using FluentValidation;
-using TechcoreMicroservices.BookService.Application.Common.Settings;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -70,6 +74,18 @@ var builder = WebApplication.CreateBuilder(args);
             }
         });
     });
+
+    // OpenTelemetry with Zipkin
+    builder.Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource
+            .AddService(serviceName: "book-service-books"))
+        .WithTracing(tracing => tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddZipkinExporter(options =>
+            {
+                options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+            }));
 }
 
 var app = builder.Build();
