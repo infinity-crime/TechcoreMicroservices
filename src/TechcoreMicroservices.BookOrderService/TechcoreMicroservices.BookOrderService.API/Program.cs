@@ -1,3 +1,6 @@
+using Npgsql;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using TechcoreMicroservices.BookOrderService.Application;
 using TechcoreMicroservices.BookOrderService.Infrastructure;
 
@@ -23,6 +26,20 @@ var builder = WebApplication.CreateBuilder(args);
             }
         });
     });
+
+    // OpenTelemetry with Zipkin
+    builder.Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource
+            .AddService(serviceName: "book-order-service"))
+        .WithTracing(tracing => tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName)
+            .AddNpgsql()
+            .AddZipkinExporter(options =>
+            {
+                options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+            }));
 }
 
 var app = builder.Build();

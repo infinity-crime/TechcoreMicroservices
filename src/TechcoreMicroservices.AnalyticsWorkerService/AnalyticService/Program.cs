@@ -8,27 +8,29 @@ using MongoDB.Driver;
 using TechcoreMicroservices.BookService.Contracts.Responses.Book;
 
 var builder = Host.CreateApplicationBuilder(args);
+{
+    builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection("KafkaSettings:Book"));
+    builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("MongoSettings"));
 
-builder.Services.Configure<KafkaSettings>(builder.Configuration.GetSection("KafkaSettings:Book"));
-builder.Services.Configure<MongoSettings>(builder.Configuration.GetSection("MongoSettings"));
+    builder.Services.AddSingleton<IMongoClient>(new MongoClient(builder
+        .Configuration["MongoSettings:MongoConnectionString"]));
 
-builder.Services.AddSingleton<IMongoClient>(new MongoClient(builder
-    .Configuration["MongoSettings:MongoConnectionString"]));
+    builder.Services.AddSingleton<IBookAnalyticsRepository, BookAnalyticsRepository>();
 
-builder.Services.AddSingleton<IBookAnalyticsRepository, BookAnalyticsRepository>();
+    builder.Services.AddHostedService<QueuedHostedService>();
 
-builder.Services.AddHostedService<QueuedHostedService>();
+    builder.Services.AddSingleton<IBackgroundTaskQueue>(_ =>
+        new DefaultBackgroundTaskQueue(capacity: 100));
 
-builder.Services.AddSingleton<IBackgroundTaskQueue>(_ =>
-    new DefaultBackgroundTaskQueue(capacity: 100));
-
-builder.Services.AddSingleton<KafkaConsumerLoop>();
+    builder.Services.AddSingleton<KafkaConsumerLoop>();
+}
 
 var host = builder.Build();
-
-KafkaConsumerLoop consumerLoop =
+{
+    KafkaConsumerLoop consumerLoop =
     host.Services.GetRequiredService<KafkaConsumerLoop>();
 
-consumerLoop.StartConsume();
+    consumerLoop.StartConsume();
 
-host.Run();
+    host.Run();
+}

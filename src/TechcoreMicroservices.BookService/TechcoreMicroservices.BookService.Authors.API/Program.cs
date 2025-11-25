@@ -1,5 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using TechcoreMicroservices.BookService.Application;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 using TechcoreMicroservices.BookService.Application.Services;
@@ -33,6 +35,18 @@ var builder = WebApplication.CreateBuilder(args);
             }
         });
     });
+
+    // OpenTelemetry with Zipkin
+    builder.Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource
+            .AddService(serviceName: "book-service-authors"))
+        .WithTracing(tracing => tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddZipkinExporter(options =>
+            {
+                options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+            }));
 }
 
 var app = builder.Build();

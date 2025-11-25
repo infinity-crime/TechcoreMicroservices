@@ -1,3 +1,5 @@
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using TechcoreMicroservices.BookReviewService.Application;
 using TechcoreMicroservices.BookReviewService.Application.Common.Settings;
 using TechcoreMicroservices.BookReviewService.Infrastructure;
@@ -26,6 +28,18 @@ var builder = WebApplication.CreateBuilder(args);
             }
         });
     });
+
+    // OpenTelemetry with Zipkin
+    builder.Services.AddOpenTelemetry()
+        .ConfigureResource(resource => resource
+            .AddService(serviceName: "book-review-service"))
+        .WithTracing(tracing => tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddZipkinExporter(options =>
+            {
+                options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+            }));
 }
 
 var app = builder.Build();
