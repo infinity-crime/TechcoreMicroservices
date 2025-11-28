@@ -3,7 +3,7 @@ using FluentValidation.AspNetCore;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using TechcoreMicroservices.BookService.Application;
+using OpenTelemetry.Instrumentation.AspNetCore;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 using TechcoreMicroservices.BookService.Application.Services;
 using TechcoreMicroservices.BookService.Authors.API.Middleware;
@@ -37,28 +37,26 @@ var builder = WebApplication.CreateBuilder(args);
         });
     });
 
-    var resourceBuilder = ResourceBuilder.CreateDefault()
-        .AddService(serviceName: "book-service-authors");
+    // Инструментирование OpenTelemetry
+    var serviceName = builder.Configuration["OTelSettings:ServiceName"] ?? "book-service-authors";
+    var otel = builder.Services.AddOpenTelemetry();
 
-    // OpenTelemetry with Zipkin
-    builder.Services.AddOpenTelemetry()
-        .ConfigureResource(resource => resource
-            .AddService(serviceName: "book-service-authors"))
-        .WithTracing(tracing => tracing
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddZipkinExporter(options =>
-            {
-                options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
-            }))
-        .WithMetrics(metrics =>
+    otel.ConfigureResource(resource => resource
+        .AddService(serviceName: serviceName));
+
+    otel.WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddZipkinExporter(options =>
         {
-            metrics.SetResourceBuilder(resourceBuilder)
-                .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation()
-                .AddRuntimeInstrumentation()
-                .AddPrometheusExporter();
-        });
+            options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+        }));
+
+    otel.WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddPrometheusExporter());
 }
 
 var app = builder.Build();

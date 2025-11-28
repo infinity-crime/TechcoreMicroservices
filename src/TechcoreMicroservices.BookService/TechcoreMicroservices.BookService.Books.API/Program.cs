@@ -10,6 +10,8 @@ using TechcoreMicroservices.BookService.Application;
 using TechcoreMicroservices.BookService.Application.Common.Settings;
 using TechcoreMicroservices.BookService.Books.API.Middleware;
 using TechcoreMicroservices.BookService.Infrastructure;
+using Npgsql;
+using Confluent.Kafka.Extensions.OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -75,28 +77,30 @@ var builder = WebApplication.CreateBuilder(args);
         });
     });
 
-    var resourceBuilder = ResourceBuilder.CreateDefault()
-        .AddService(serviceName: "book-service-books");
+    // Инструментирование OpenTelemetry
+    var serviceName = builder.Configuration["OTelSettings:ServiceName"] ?? "book-service-books";
+    var otel = builder.Services.AddOpenTelemetry();
 
-    // OpenTelemetry with Zipkin
-    builder.Services.AddOpenTelemetry()
-        .ConfigureResource(resource => resource
-            .AddService(serviceName: "book-service-books"))
-        .WithTracing(tracing => tracing
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddZipkinExporter(options =>
-            {
-                options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
-            }))
-        .WithMetrics(metrics =>
+    otel.ConfigureResource(resource => resource
+        .AddService(serviceName: serviceName));
+
+    otel.WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName)
+        .AddNpgsql()
+        .AddConfluentKafkaInstrumentation()
+        .AddZipkinExporter(options =>
         {
-            metrics.SetResourceBuilder(resourceBuilder)
-                .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation()
-                .AddRuntimeInstrumentation()
-                .AddPrometheusExporter();
-        });
+            options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+        }));
+
+    otel.WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddMeter("BookServiceMetrica.Books")
+        .AddPrometheusExporter());
 }
 
 var app = builder.Build();

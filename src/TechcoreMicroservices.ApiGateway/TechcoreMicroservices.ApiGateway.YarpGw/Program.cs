@@ -87,28 +87,26 @@ var builder = WebApplication.CreateBuilder(args);
         });
     });
 
-    var resourceBuilder = ResourceBuilder.CreateDefault()
-        .AddService(serviceName: "api-gateway");
+    // Инструментирование OpenTelemetry
+    var serviceName = builder.Configuration["OTelSettings:ServiceName"] ?? "api-gateway";
+    var otel = builder.Services.AddOpenTelemetry();
 
-    // OpenTelemetry with Zipkin
-    builder.Services.AddOpenTelemetry()
-        .ConfigureResource(resource => resource
-            .AddService(serviceName: "api-gateway"))
-        .WithTracing(tracing => tracing
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddZipkinExporter(options =>
-            {
-                options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
-            }))
-        .WithMetrics(metrics =>
+    otel.ConfigureResource(resource => resource
+        .AddService(serviceName: serviceName));
+
+    otel.WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddZipkinExporter(options =>
         {
-            metrics.SetResourceBuilder(resourceBuilder)
-                .AddAspNetCoreInstrumentation()
-                .AddHttpClientInstrumentation()
-                .AddRuntimeInstrumentation()
-                .AddPrometheusExporter();
-        });
+            options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+        }));
+
+    otel.WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddPrometheusExporter());
 }
 
 var app = builder.Build();

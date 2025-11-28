@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Security.Claims;
@@ -7,6 +6,7 @@ using TechcoreMicroservices.BookService.Application.Common.Interfaces.Persistenc
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 using TechcoreMicroservices.BookService.Application.Common.Settings;
 using TechcoreMicroservices.BookService.Books.API.Controllers.Common;
+using TechcoreMicroservices.BookService.Books.API.Metrics;
 using TechcoreMicroservices.BookService.Contracts.Requests.Book;
 using TechcoreMicroservices.BookService.Contracts.Responses.Book;
 using TechcoreMicroservices.BookService.Contracts.Responses.BookDetails;
@@ -120,6 +120,8 @@ public class BooksController : BaseController
     public async Task<IActionResult> CreateBook([FromBody] CreateBookRequest request, CancellationToken cancellationToken)
     {
         var result = await _bookService.CreateBookAsync(request, cancellationToken);
+        if (result.IsSuccess)
+            BookMetrics.BookCreatedCounter.Add(1);
 
         return HandleResult<BookResponse>(result);
     }
