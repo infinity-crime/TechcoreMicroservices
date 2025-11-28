@@ -1,4 +1,5 @@
 using Npgsql;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using TechcoreMicroservices.BookOrderService.Application;
@@ -27,6 +28,9 @@ var builder = WebApplication.CreateBuilder(args);
         });
     });
 
+    var resourceBuilder = ResourceBuilder.CreateDefault()
+        .AddService(serviceName: "book-order-service");
+
     // OpenTelemetry with Zipkin
     builder.Services.AddOpenTelemetry()
         .ConfigureResource(resource => resource
@@ -39,7 +43,15 @@ var builder = WebApplication.CreateBuilder(args);
             .AddZipkinExporter(options =>
             {
                 options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
-            }));
+            }))
+        .WithMetrics(metrics =>
+        {
+            metrics.SetResourceBuilder(resourceBuilder)
+                .AddAspNetCoreInstrumentation()
+                .AddHttpClientInstrumentation()
+                .AddRuntimeInstrumentation()
+                .AddPrometheusExporter();
+        });
 }
 
 var app = builder.Build();
@@ -52,6 +64,9 @@ var app = builder.Build();
 
     app.UseHttpsRedirection();
     app.UseAuthorization();
+
+    app.MapPrometheusScrapingEndpoint();
+
     app.MapControllers();
     app.Run();
 }
