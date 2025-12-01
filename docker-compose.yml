@@ -226,6 +226,19 @@ services:
     networks:
       - default-net
 
+  loki:
+    image: grafana/loki:latest
+    container_name: TechcoreMicroservices-LokiContainer
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml:ro
+      - ./loki-data:/loki
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
+    restart: unless-stopped
+    networks:
+      - default-net
+
 volumes:
   BooksKeeper-Db-Data:
   redis-data:

@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Polly;
 using Polly.CircuitBreaker;
+using Polly.Contrib.Simmy;
 using Polly.Extensions.Http;
 using Polly.Timeout;
 using System;
@@ -54,7 +55,7 @@ public static class DependencyInjection
     private static void AddHttpClientFactory(IServiceCollection services)
     {
         var fallback = Policy<HttpResponseMessage>
-            .Handle<BrokenCircuitException>()
+            .Handle<Polly.CircuitBreaker.BrokenCircuitException>()
             .FallbackAsync(fallbackAction: async (ct) =>
             {
                 var fallbackReview = new BookReviewResponse("unknown", Guid.Empty, "", 0, "", DateTime.Now);
@@ -79,13 +80,19 @@ public static class DependencyInjection
         var retryPolicy = HttpPolicyExtensions
             .HandleTransientHttpError()
             .WaitAndRetryAsync(
-            retryCount: 3,
-            sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)));
+                retryCount: 3,
+                sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)));
 
         var timeoutPolicy = Policy
             .TimeoutAsync<HttpResponseMessage>(TimeSpan.FromSeconds(3), TimeoutStrategy.Optimistic);
 
-        var policyWrap = Policy.WrapAsync(fallback, circuitBreakerPolicy, retryPolicy, timeoutPolicy);
+        var chaosPolicy = MonkeyPolicy.InjectFaultAsync<HttpResponseMessage>(
+            injectionRate: 0.1,
+            fault: new HttpRequestException("Chaooooosss! (10%)"),
+            enabled: () => true
+            );
+
+        var policyWrap = Policy.WrapAsync(fallback, circuitBreakerPolicy, retryPolicy, timeoutPolicy, chaosPolicy);
 
         services.AddHttpClient<IBookReviewHttpService, BookReviewHttpService>(client =>
         {

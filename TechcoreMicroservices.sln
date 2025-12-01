@@ -22,6 +22,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Элементы решен
 		docker-compose.yml = docker-compose.yml
 		Kafka_10_module.md = Kafka_10_module.md
 		Kafka_Streams_10_module.md = Kafka_Streams_10_module.md
+		loki-config.yaml = loki-config.yaml
 		prometheus.yml = prometheus.yml
 	EndProjectSection
 EndProject

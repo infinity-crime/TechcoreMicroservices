@@ -3,15 +3,15 @@ using FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
-using OpenTelemetry.Logs;
-using System.Diagnostics;
 using OpenTelemetry.Metrics;
 using TechcoreMicroservices.BookService.Application;
 using TechcoreMicroservices.BookService.Application.Common.Settings;
 using TechcoreMicroservices.BookService.Books.API.Middleware;
 using TechcoreMicroservices.BookService.Infrastructure;
 using Npgsql;
+using Serilog;
 using Confluent.Kafka.Extensions.OpenTelemetry;
+using Serilog.Sinks.Grafana.Loki;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -77,8 +77,17 @@ var builder = WebApplication.CreateBuilder(args);
         });
     });
 
-    // Инструментирование OpenTelemetry
     var serviceName = builder.Configuration["OTelSettings:ServiceName"] ?? "book-service-books";
+
+    Log.Logger = new LoggerConfiguration()
+        .WriteTo.Console()
+        .WriteTo.GrafanaLoki("http://loki:3100")
+        .CreateLogger();
+
+    builder.Host.UseSerilog();
+
+
+    // Инструментирование OpenTelemetry
     var otel = builder.Services.AddOpenTelemetry();
 
     otel.ConfigureResource(resource => resource
@@ -123,5 +132,18 @@ var app = builder.Build();
 
     app.MapHealthChecks("/healthz");
 
-    app.Run();
+    try
+    {
+        Log.Information("Starting service: book-service-books");
+        app.Run();
+    }
+    catch(Exception ex)
+    {
+        Log.Fatal(ex, "Host terminated unexpectedly");
+        throw;
+    }
+    finally
+    {
+        Log.CloseAndFlush();
+    }
 }

@@ -24,21 +24,27 @@ public class BooksController : BaseController
 
     private readonly ApiSettings _apiSettings;
 
+    private readonly ILogger<BooksController> _logger;
+
     public BooksController(IBookService bookService,
         IBookDetailsService bookDetailsService,
         IKafkaProducer kafkaProducer,
-        IOptions<ApiSettings> apiSettings)
+        IOptions<ApiSettings> apiSettings,
+        ILogger<BooksController> logger)
     {
         _bookService = bookService;
         _bookDetailsService = bookDetailsService;
         _kafkaProducer = kafkaProducer;
 
         _apiSettings = apiSettings.Value;
+        _logger = logger;
     }
 
     [HttpGet("give-my-info")]
     public IActionResult GetUserInfoFromToken()
     {
+        _logger.LogInformation("Entry in GetUserInfoFromToken");
+
         var info = new
         {
             Id = User.FindFirst(ClaimTypes.NameIdentifier)?.Value,
@@ -54,6 +60,8 @@ public class BooksController : BaseController
     [HttpGet("api-settings")]
     public IActionResult GetApiSettings()
     {
+        _logger.LogInformation("Entry in GetApiSettings");
+
         return Ok(_apiSettings);
     }
 
