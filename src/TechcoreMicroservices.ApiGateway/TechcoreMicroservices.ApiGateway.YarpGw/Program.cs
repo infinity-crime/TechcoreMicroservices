@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -83,6 +86,27 @@ var builder = WebApplication.CreateBuilder(args);
             policy.AuthenticationSchemes.Add("Bearer");
         });
     });
+
+    // Инструментирование OpenTelemetry
+    var serviceName = builder.Configuration["OTelSettings:ServiceName"] ?? "api-gateway";
+    var otel = builder.Services.AddOpenTelemetry();
+
+    otel.ConfigureResource(resource => resource
+        .AddService(serviceName: serviceName));
+
+    otel.WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddZipkinExporter(options =>
+        {
+            options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+        }));
+
+    otel.WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddPrometheusExporter());
 }
 
 var app = builder.Build();
@@ -93,6 +117,8 @@ var app = builder.Build();
     app.UseAuthorization();
 
     app.MapReverseProxy();
+
+    app.MapPrometheusScrapingEndpoint();
 
     app.MapGet("/details/{id}", async (Guid id, IHttpClientFactory httpFactory, HttpContext httpContext) =>
     {

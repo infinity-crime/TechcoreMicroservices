@@ -1,3 +1,7 @@
+using Npgsql;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 using TechcoreMicroservices.BookOrderService.Application;
 using TechcoreMicroservices.BookOrderService.Infrastructure;
 
@@ -23,6 +27,29 @@ var builder = WebApplication.CreateBuilder(args);
             }
         });
     });
+
+    // Инструментирование OpenTelemetry
+    var serviceName = builder.Configuration["OTelSettings:ServiceName"] ?? "book-order-service";
+    var otel = builder.Services.AddOpenTelemetry();
+
+    otel.ConfigureResource(resource => resource
+        .AddService(serviceName: serviceName));
+
+    otel.WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName)
+        .AddNpgsql()
+        .AddZipkinExporter(options =>
+        {
+            options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+        }));
+
+    otel.WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddPrometheusExporter());
 }
 
 var app = builder.Build();
@@ -35,6 +62,9 @@ var app = builder.Build();
 
     app.UseHttpsRedirection();
     app.UseAuthorization();
+
+    app.MapPrometheusScrapingEndpoint();
+
     app.MapControllers();
     app.Run();
 }

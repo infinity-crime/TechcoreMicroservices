@@ -1,6 +1,9 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using TechcoreMicroservices.BookService.Application;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Instrumentation.AspNetCore;
 using TechcoreMicroservices.BookService.Application.Common.Interfaces.Services;
 using TechcoreMicroservices.BookService.Application.Services;
 using TechcoreMicroservices.BookService.Authors.API.Middleware;
@@ -33,6 +36,27 @@ var builder = WebApplication.CreateBuilder(args);
             }
         });
     });
+
+    // Инструментирование OpenTelemetry
+    var serviceName = builder.Configuration["OTelSettings:ServiceName"] ?? "book-service-authors";
+    var otel = builder.Services.AddOpenTelemetry();
+
+    otel.ConfigureResource(resource => resource
+        .AddService(serviceName: serviceName));
+
+    otel.WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddZipkinExporter(options =>
+        {
+            options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+        }));
+
+    otel.WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddPrometheusExporter());
 }
 
 var app = builder.Build();
@@ -47,6 +71,9 @@ var app = builder.Build();
 
     app.UseHttpsRedirection();
     app.UseAuthorization();
+
+    app.MapPrometheusScrapingEndpoint();
+
     app.MapControllers();
     app.Run();
 }

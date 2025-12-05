@@ -9,6 +9,7 @@ using TechcoreMicroservices.BookService.Infrastructure.Kafka.Serializers;
 using Microsoft.Extensions.Options;
 using TechcoreMicroservices.BookService.Application.Common.Settings;
 using TechcoreMicroservices.BookService.Contracts.Responses.Book;
+using Confluent.Kafka.Extensions.Diagnostics;
 
 namespace TechcoreMicroservices.BookService.Infrastructure.Kafka;
 
@@ -26,7 +27,7 @@ public class KafkaProducer : IKafkaProducer
 
         _producer = new ProducerBuilder<string, BookResponse>(config)
             .SetValueSerializer(new KafkaSerializer<BookResponse>())
-            .Build();
+            .BuildWithInstrumentation();
 
         _topic = options.Value.Topic;
     }

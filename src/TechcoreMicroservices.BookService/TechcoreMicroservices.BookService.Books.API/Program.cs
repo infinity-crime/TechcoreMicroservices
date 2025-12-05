@@ -1,11 +1,17 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.OpenApi.Models;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using OpenTelemetry.Metrics;
 using TechcoreMicroservices.BookService.Application;
+using TechcoreMicroservices.BookService.Application.Common.Settings;
 using TechcoreMicroservices.BookService.Books.API.Middleware;
 using TechcoreMicroservices.BookService.Infrastructure;
-using FluentValidation.AspNetCore;
-using FluentValidation;
-using TechcoreMicroservices.BookService.Application.Common.Settings;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Identity;
+using Npgsql;
+using Serilog;
+using Confluent.Kafka.Extensions.OpenTelemetry;
+using Serilog.Sinks.Grafana.Loki;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -70,6 +76,40 @@ var builder = WebApplication.CreateBuilder(args);
             }
         });
     });
+
+    var serviceName = builder.Configuration["OTelSettings:ServiceName"] ?? "book-service-books";
+
+    Log.Logger = new LoggerConfiguration()
+        .WriteTo.Console()
+        .WriteTo.GrafanaLoki("http://loki:3100")
+        .CreateLogger();
+
+    builder.Host.UseSerilog();
+
+
+    // Инструментирование OpenTelemetry
+    var otel = builder.Services.AddOpenTelemetry();
+
+    otel.ConfigureResource(resource => resource
+        .AddService(serviceName: serviceName));
+
+    otel.WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddSource(MassTransit.Logging.DiagnosticHeaders.DefaultListenerName)
+        .AddNpgsql()
+        .AddConfluentKafkaInstrumentation()
+        .AddZipkinExporter(options =>
+        {
+            options.Endpoint = new Uri("http://zipkin:9411/api/v2/spans");
+        }));
+
+    otel.WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddMeter("BookServiceMetrica.Books")
+        .AddPrometheusExporter());
 }
 
 var app = builder.Build();
@@ -88,7 +128,22 @@ var app = builder.Build();
     app.UseAuthorization();
     app.MapControllers();
 
+    app.MapPrometheusScrapingEndpoint();
+
     app.MapHealthChecks("/healthz");
 
-    app.Run();
+    try
+    {
+        Log.Information("Starting service: book-service-books");
+        app.Run();
+    }
+    catch(Exception ex)
+    {
+        Log.Fatal(ex, "Host terminated unexpectedly");
+        throw;
+    }
+    finally
+    {
+        Log.CloseAndFlush();
+    }
 }
