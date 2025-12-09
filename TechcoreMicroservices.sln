@@ -68,6 +68,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.ApiGa
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TechcoreMicroservices.ApiGateway.YarpGw", "src\TechcoreMicroservices.ApiGateway\TechcoreMicroservices.ApiGateway.YarpGw\TechcoreMicroservices.ApiGateway.YarpGw.csproj", "{7FDC6465-6ABA-4846-B463-F568D1FF4DB3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8sFiles", "K8sFiles", "{B359700F-F8B6-4F32-ACA8-68ECB3B61B3B}"
+	ProjectSection(SolutionItems) = preProject
+		K8sFiles\13_module_DefinitionsK8s.md = K8sFiles\13_module_DefinitionsK8s.md
+		K8sFiles\appsettings.k8s.json = K8sFiles\appsettings.k8s.json
+		K8sFiles\book-service-books-deployment.yml = K8sFiles\book-service-books-deployment.yml
+		K8sFiles\book-service-books-service.yml = K8sFiles\book-service-books-service.yml
+		K8sFiles\postgres-deployment.yml = K8sFiles\postgres-deployment.yml
+		K8sFiles\postgres-pvc.yml = K8sFiles\postgres-pvc.yml
+		K8sFiles\postgres-service.yml = K8sFiles\postgres-service.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
