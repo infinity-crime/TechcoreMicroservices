@@ -79,6 +79,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8sFiles", "K8sFiles", "{B3
 		K8sFiles\postgres-service.yml = K8sFiles\postgres-service.yml
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "helm-values", "helm-values", "{A1AFA86B-4EA6-49F1-B398-3AB6CFC26597}"
+	ProjectSection(SolutionItems) = preProject
+		K8sFiles\helm-values\kafka.yml = K8sFiles\helm-values\kafka.yml
+		K8sFiles\helm-values\mongodb.yml = K8sFiles\helm-values\mongodb.yml
+		K8sFiles\helm-values\postgres.yml = K8sFiles\helm-values\postgres.yml
+		K8sFiles\helm-values\rabbitmq.yml = K8sFiles\helm-values\rabbitmq.yml
+		K8sFiles\helm-values\redis.yml = K8sFiles\helm-values\redis.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -201,6 +210,7 @@ Global
 		{2E083F44-B7A3-4D95-B07A-7B53B104BF3E} = {36D591C7-65C7-A0D1-1CBC-10CDE441BDC8}
 		{8B2E6C72-5229-4C87-B8F4-86D2A56AEB9D} = {2E083F44-B7A3-4D95-B07A-7B53B104BF3E}
 		{7FDC6465-6ABA-4846-B463-F568D1FF4DB3} = {2E083F44-B7A3-4D95-B07A-7B53B104BF3E}
+		{A1AFA86B-4EA6-49F1-B398-3AB6CFC26597} = {B359700F-F8B6-4F32-ACA8-68ECB3B61B3B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {59B02EA6-E133-4524-A182-E53FB66C8AA3}
