@@ -85,6 +85,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "K8sFiles", "K8sFiles", "{B3
 		K8sFiles\book-service-secret.yml = K8sFiles\book-service-secret.yml
 		K8sFiles\bookorder-service-config.yml = K8sFiles\bookorder-service-config.yml
 		K8sFiles\bookorder-service-secret.yml = K8sFiles\bookorder-service-secret.yml
+		K8sFiles\ingress.yml = K8sFiles\ingress.yml
 	EndProjectSection
 EndProject
 Global
