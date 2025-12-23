@@ -1,5 +1,6 @@
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Ocelot.Provider.Kubernetes;
 using TechcoreMicroservices.ApiGateway.OcelotGw.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddBearerAuth(builder.Configuration);
 
-    builder.Services.AddOcelot(builder.Configuration);
+    builder.Services.AddOcelot(builder.Configuration)
+        .AddKubernetes();
 }
 
 var app = builder.Build();

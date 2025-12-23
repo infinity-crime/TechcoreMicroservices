@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: book-service-deployment
+  name: book-order-service-deployment
   labels:
-    app: book-service
+    app: book-order-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: book-service
+      app: book-order-service
   template:
     metadata:
       labels:
-        app: book-service
+        app: book-order-service
     spec:
       containers:
-        - name: book-service
-          image: techcoremicroservicesbookservicebooksapi
+        - name: book-order-service
+          image: techcoremicroservicesbookorderserviceapi
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -26,11 +26,11 @@ spec:
               readOnly: true
           envFrom:
             - secretRef:
-                name: book-service-secrets
+                name: bookorder-service-secrets
       volumes:
         - name: config-volume
           configMap:
-            name: book-service-config
+            name: bookorder-service-config
             items:
               - key: appsettings.json
                 path: appsettings.json
@@ -38,12 +38,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: book-service
+  name: book-order-service
 spec:
   type: NodePort
   selector:
-    app: book-service
+    app: book-order-service
   ports:
-    - port: 8080
+    - port: 8083
       targetPort: 8080
-      nodePort: 30080
+      nodePort: 30083

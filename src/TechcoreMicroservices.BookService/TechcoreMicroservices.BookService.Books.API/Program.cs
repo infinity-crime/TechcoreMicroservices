@@ -12,9 +12,16 @@ using Npgsql;
 using Serilog;
 using Confluent.Kafka.Extensions.OpenTelemetry;
 using Serilog.Sinks.Grafana.Loki;
+using TechcoreMicroservices.BookService.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 {
+    builder.Configuration
+       .AddJsonFile("/app/config/appsettings.json", optional: true, reloadOnChange: true)
+       .AddEnvironmentVariables();
+
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddApplication(builder.Configuration);
 
@@ -118,6 +125,32 @@ var app = builder.Build();
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+    }
+
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        await context.Database.MigrateAsync();
+        app.Logger.LogInformation("------------Migrate succsess!----------------");
+
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        string[] roleNames = { "DefaultUser", "Admin" };
+
+        foreach(var role in roleNames)
+        {
+            if (!await roleManager.RoleExistsAsync(role))
+            {
+                await roleManager.CreateAsync(new IdentityRole(role));
+            }
+        }
+
+        app.Logger.LogInformation("------------Role succsess!----------------");
+    }
+    catch (Exception)
+    {
+        app.Logger.LogError("------------Migrate failed!----------------");
     }
 
     app.UseMiddleware<ExceptionHandlerMiddleware>();

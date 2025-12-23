@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bookorder-service-config
+data:
+  appsettings.json: |
+    {
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "ConnectionStrings": {
+        "DefaultConnection": "Host=10.97.38.90;Port=5432;Database=postgres;Username=postgres;Password=PLACEHOLDER_DB_PASSWORD"
+      },
+      "RabbitMqSettings": {
+        "Username": "admin",
+        "Password": "PLACEHOLDER_RABBIT_PASSWORD"
+      },
+      "OTelSettings": {
+        "ServiceName": "book-order-service"
+      }
+    }

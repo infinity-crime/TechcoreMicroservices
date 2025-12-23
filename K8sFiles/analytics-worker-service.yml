@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics-worker
+  namespace: apps
+  labels:
+    app: analytics-worker
+spec:
+  clusterIP: None
+  selector:
+    app: analytics-worker

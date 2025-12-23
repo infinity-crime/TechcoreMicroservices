@@ -1,9 +1,11 @@
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using TechcoreMicroservices.BookOrderService.Application;
 using TechcoreMicroservices.BookOrderService.Infrastructure;
+using TechcoreMicroservices.BookOrderService.Infrastructure.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -58,6 +60,19 @@ var app = builder.Build();
     {
         app.UseSwagger();
         app.UseSwaggerUI();
+    }
+
+    try
+    {
+        using var scope = app.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+        await context.Database.MigrateAsync();
+        app.Logger.LogInformation("------------Migrate succsess!----------------");
+    }
+    catch(Exception)
+    {
+        app.Logger.LogError("------------Migrate failed!----------------");
     }
 
     app.UseHttpsRedirection();

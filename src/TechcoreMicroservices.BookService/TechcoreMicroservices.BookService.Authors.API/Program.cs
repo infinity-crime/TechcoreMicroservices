@@ -11,6 +11,10 @@ using TechcoreMicroservices.BookService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 {
+    builder.Configuration
+       .AddJsonFile("/app/config/appsettings.json", optional: true, reloadOnChange: true)
+       .AddEnvironmentVariables();
+
     builder.Services.AddInfrastructure(builder.Configuration);
     builder.Services.AddScoped<IAuthorService, AuthorService>();
 
