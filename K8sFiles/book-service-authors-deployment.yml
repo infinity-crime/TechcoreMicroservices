@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: book-service-deployment
+  name: author-service-deployment
   labels:
-    app: book-service
+    app: author-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: book-service
+      app: author-service
   template:
     metadata:
       labels:
-        app: book-service
+        app: author-service
     spec:
       containers:
-        - name: book-service
-          image: techcoremicroservicesbookservicebooksapi
+        - name: author-service
+          image: techcoremicroservicesbookserviceauthorsapi
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
@@ -39,28 +39,28 @@ spec:
             timeoutSeconds: 5
           volumeMounts:
             - name: config-volume
-              mountPath: /app/config
+              mountPath: /app/config   
               readOnly: true
           envFrom:
             - secretRef:
-                name: book-service-secrets
+                name: author-service-secrets
       volumes:
         - name: config-volume
           configMap:
-            name: book-service-config
+            name: author-service-config
             items:
               - key: appsettings.json
-                path: appsettings.json
+                path: appsettings.json 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: book-service
+  name: author-service
 spec:
   type: NodePort
   selector:
-    app: book-service
+    app: author-service
   ports:
-    - port: 8080
+    - port: 8081
       targetPort: 8080
-      nodePort: 30080
+      nodePort: 30081

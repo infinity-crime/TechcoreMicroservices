@@ -1,0 +1,19 @@
+auth:
+  username: admin
+  password: rabbit
+  erlangCookie: secret-cookie
+
+persistence:
+  enabled: true
+  size: 2Gi
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false
+
+service:
+  type: NodePort
+  ports:
+    amqp: 5672
+    management: 15672

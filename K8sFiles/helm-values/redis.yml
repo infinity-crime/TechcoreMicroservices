@@ -1,0 +1,17 @@
+architecture: standalone
+
+auth:
+  enabled: false
+
+master:
+  persistence:
+    enabled: true
+    size: 2Gi
+
+service:
+  type: NodePort
+  ports:
+    redis: 6379
+
+metrics:
+  enabled: true

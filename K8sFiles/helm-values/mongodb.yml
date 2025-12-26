@@ -1,0 +1,14 @@
+architecture: standalone
+
+auth:
+  enabled: false
+  existingSecret: ""
+
+persistence:
+  enabled: true
+  size: 2Gi
+
+service:
+  type: NodePort
+  ports:
+    mongodb: 27017

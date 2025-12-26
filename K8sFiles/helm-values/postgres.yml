@@ -1,0 +1,15 @@
+auth:
+  username: postgres
+  password: "554034"
+  database: postgresDb
+  postgresPassword: "554034"
+
+primary:
+  persistence:
+    enabled: true
+    size: 5Gi
+
+service:
+  type: NodePort
+  ports:
+    postgresql: 5432
